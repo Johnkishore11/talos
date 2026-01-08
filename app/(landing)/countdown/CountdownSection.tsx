@@ -21,7 +21,7 @@ const getTimeLeft = (targetDate: number): TimeLeft => {
     };
 };
 
-function FlipUnit({ value, label, opacityLabel }: { value: number; label: string; opacityLabel?: any }) {
+function FlipUnit({ value, label, opacityLabel }: { value: number; label: string; opacityLabel?: number | import('framer-motion').MotionValue<number> }) {
     const padded = String(value).padStart(2, "0");
     // Ghost numbers to create the "digital clock" empty segment effect
     const ghost = "~~";

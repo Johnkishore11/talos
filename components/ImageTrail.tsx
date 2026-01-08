@@ -14,21 +14,21 @@ function lerp(a: number, b: number, n: number): number {
   return (1 - n) * a + n * b;
 }
 
-function getLocalPointerPos(e: any, rect: DOMRect): Point {
+function getLocalPointerPos(e: MouseEvent | TouchEvent, rect: DOMRect): Point {
   let clientX = 0,
     clientY = 0;
-  if (e.touches && e.touches.length > 0) {
-    clientX = e.touches[0].clientX;
-    clientY = e.touches[0].clientY;
-  } else {
-    clientX = e.clientX;
-    clientY = e.clientY;
+  if ('touches' in e && (e as TouchEvent).touches && (e as TouchEvent).touches.length > 0) {
+    clientX = (e as TouchEvent).touches[0].clientX;
+    clientY = (e as TouchEvent).touches[0].clientY;
+  } else if ('clientX' in e) {
+    clientX = (e as MouseEvent).clientX;
+    clientY = (e as MouseEvent).clientY;
   }
   return {
     x: clientX - rect.left,
     y: clientY - rect.top
   };
-}
+} 
 
 function getMouseDistance(p1: Point, p2: Point): number {
   const dx = p1.x - p2.x;
@@ -116,7 +116,7 @@ class ImageTrailVariant1 implements ImageTrailVariant {
   }
 
   render() {
-    let distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
 
@@ -233,7 +233,7 @@ class ImageTrailVariant2 implements ImageTrailVariant {
   }
 
   render() {
-    let distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
 
@@ -362,7 +362,7 @@ class ImageTrailVariant3 implements ImageTrailVariant {
   }
 
   render() {
-    let distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
 
@@ -492,7 +492,7 @@ class ImageTrailVariant4 implements ImageTrailVariant {
   }
 
   render() {
-    let distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     if (distance > this.threshold) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
@@ -512,7 +512,7 @@ class ImageTrailVariant4 implements ImageTrailVariant {
 
     let dx = this.mousePos.x - this.cacheMousePos.x;
     let dy = this.mousePos.y - this.cacheMousePos.y;
-    let distance = Math.sqrt(dx * dx + dy * dy);
+    const distance = Math.sqrt(dx * dx + dy * dy);
     if (distance !== 0) {
       dx /= distance;
       dy /= distance;
@@ -639,7 +639,7 @@ class ImageTrailVariant5 implements ImageTrailVariant {
   }
 
   render() {
-    let distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     if (distance > this.threshold) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
@@ -658,8 +658,8 @@ class ImageTrailVariant5 implements ImageTrailVariant {
     if (angle > 90 && angle <= 270) angle += 180;
     const isMovingClockwise = angle >= this.lastAngle;
     this.lastAngle = angle;
-    let startAngle = isMovingClockwise ? angle - 10 : angle + 10;
-    let distance = Math.sqrt(dx * dx + dy * dy);
+    const startAngle = isMovingClockwise ? angle - 10 : angle + 10;
+    const distance = Math.sqrt(dx * dx + dy * dy);
     if (distance !== 0) {
       dx /= distance;
       dy /= distance;
@@ -779,7 +779,7 @@ class ImageTrailVariant6 implements ImageTrailVariant {
   }
 
   render() {
-    let distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.3);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.3);
 
@@ -811,18 +811,18 @@ class ImageTrailVariant6 implements ImageTrailVariant {
   }
 
   showNextImage() {
-    let dx = this.mousePos.x - this.cacheMousePos.x;
-    let dy = this.mousePos.y - this.cacheMousePos.y;
-    let speed = Math.sqrt(dx * dx + dy * dy);
+    const dx = this.mousePos.x - this.cacheMousePos.x;
+    const dy = this.mousePos.y - this.cacheMousePos.y;
+    const speed = Math.sqrt(dx * dx + dy * dy);
 
     ++this.zIndexVal;
     this.imgPosition = this.imgPosition < this.imagesTotal - 1 ? this.imgPosition + 1 : 0;
     const img = this.images[this.imgPosition];
 
-    let scaleFactor = this.mapSpeedToSize(speed, 0.3, 2);
-    let brightnessValue = this.mapSpeedToBrightness(speed, 0, 1.3);
-    let blurValue = this.mapSpeedToBlur(speed, 20, 0);
-    let grayscaleValue = this.mapSpeedToGrayscale(speed, 600, 0);
+    const scaleFactor = this.mapSpeedToSize(speed, 0.3, 2);
+    const brightnessValue = this.mapSpeedToBrightness(speed, 0, 1.3);
+    const blurValue = this.mapSpeedToBlur(speed, 20, 0);
+    const grayscaleValue = this.mapSpeedToGrayscale(speed, 600, 0);
 
     gsap.killTweensOf(img.DOM.el);
     gsap
@@ -885,14 +885,14 @@ class ImageTrailVariant6 implements ImageTrailVariant {
   }
 }
 
-function getNewPosition(position: number, offset: number, arr: any[]) {
+function getNewPosition(position: number, offset: number, arr: unknown[]) {
   const realOffset = Math.abs(offset) % arr.length;
   if (position - realOffset >= 0) {
     return position - realOffset;
   } else {
     return arr.length - (realOffset - position);
   }
-}
+} 
 class ImageTrailVariant7 implements ImageTrailVariant {
   container: HTMLElement;
   DOM: { el: HTMLElement };
@@ -948,7 +948,7 @@ class ImageTrailVariant7 implements ImageTrailVariant {
   }
 
   render() {
-    let distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.3);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.3);
 
@@ -1080,7 +1080,7 @@ class ImageTrailVariant8 implements ImageTrailVariant {
   }
 
   render() {
-    let distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
 
@@ -1172,7 +1172,7 @@ class ImageTrailVariant8 implements ImageTrailVariant {
 
 type VariantType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8";
 
-const variantMap: Record<number, any> = {
+const variantMap: Record<number, new (container: HTMLElement) => ImageTrailVariant> = {
   1: ImageTrailVariant1,
   2: ImageTrailVariant2,
   3: ImageTrailVariant3,

@@ -37,8 +37,8 @@ export interface EventRegistrationData {
   
   // Metadata
   status: string;
-  registered_at: any;
-}
+  registered_at: unknown;
+} 
 
 // Workshop Registration Data - Solo with payment
 export interface WorkshopRegistrationData {
@@ -62,19 +62,19 @@ export interface WorkshopRegistrationData {
   
   // Metadata
   status: string;
-  registered_at: any;
-  payment_completed_at?: any;
-}
+  registered_at: unknown;
+  payment_completed_at?: unknown;
+} 
 
 /**
  * Get all event registrations for a user by email
  * Searches across all event-specific collections
  */
-export async function getUserEventRegistrations(userEmail: string): Promise<any[]> {
+export async function getUserEventRegistrations(userEmail: string): Promise<unknown[]> {
   if (!db) return [];
 
   try {
-    const allRegistrations: any[] = [];
+    const allRegistrations: unknown[] = [];
 
     // Get all events
     const eventsSnapshot = await getDocs(collection(db, 'events'));
@@ -90,7 +90,7 @@ export async function getUserEventRegistrations(userEmail: string): Promise<any[
       const registrationsSnapshot = await getDocs(q);
 
       registrationsSnapshot.forEach((doc) => {
-        const data = doc.data();
+        const data = doc.data() as Record<string, unknown>;
         allRegistrations.push({
           id: doc.id,
           event_name: eventData.title || eventId,
@@ -105,17 +105,17 @@ export async function getUserEventRegistrations(userEmail: string): Promise<any[
     console.error('Error fetching user event registrations:', error);
     return [];
   }
-}
+} 
 
 /**
  * Get all workshop registrations for a user by email
  * Searches across all workshop-specific collections
  */
-export async function getUserWorkshopRegistrations(userEmail: string): Promise<any[]> {
+export async function getUserWorkshopRegistrations(userEmail: string): Promise<unknown[]> {
   if (!db) return [];
 
   try {
-    const allRegistrations: any[] = [];
+    const allRegistrations: unknown[] = [];
 
     // Get all workshops
     const workshopsSnapshot = await getDocs(collection(db, 'workshops'));
@@ -135,7 +135,7 @@ export async function getUserWorkshopRegistrations(userEmail: string): Promise<a
       const registrationsSnapshot = await getDocs(q);
 
       registrationsSnapshot.forEach((doc) => {
-        const data = doc.data();
+        const data = doc.data() as Record<string, unknown>;
         allRegistrations.push({
           id: doc.id,
           workshop_name: workshopData.title || workshopId,
@@ -150,14 +150,12 @@ export async function getUserWorkshopRegistrations(userEmail: string): Promise<a
     console.error('Error fetching user workshop registrations:', error);
     return [];
   }
-}
-  }
-}
+}  
 
 /**
  * Get a specific event's details
  */
-export async function getEventDetails(eventSlug: string): Promise<any | null> {
+export async function getEventDetails(eventSlug: string): Promise<Record<string, unknown> | null> {
   if (!db) return null;
 
   try {
@@ -165,14 +163,14 @@ export async function getEventDetails(eventSlug: string): Promise<any | null> {
     const eventSnap = await getDoc(eventRef);
 
     if (eventSnap.exists()) {
-      return { id: eventSnap.id, ...eventSnap.data() };
+      return { id: eventSnap.id, ...(eventSnap.data() as Record<string, unknown>) };
     }
     return null;
   } catch (error) {
     console.error('Error fetching event details:', error);
     return null;
   }
-}
+} 
 
 /**
  * Check if team name is available for an event
@@ -244,7 +242,7 @@ export async function isUserRegisteredForWorkshop(
 /**
  * Get all registrations for a specific event (admin use)
  */
-export async function getEventRegistrations(eventSlug: string): Promise<any[]> {
+export async function getEventRegistrations(eventSlug: string): Promise<Record<string, unknown>[]> {
   if (!db) return [];
 
   try {
@@ -253,18 +251,18 @@ export async function getEventRegistrations(eventSlug: string): Promise<any[]> {
 
     return snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data(),
+      ...(doc.data() as Record<string, unknown>),
     }));
   } catch (error) {
     console.error('Error fetching event registrations:', error);
     return [];
   }
-}
+} 
 
 /**
  * Get all registrations for a specific workshop (admin use)
  */
-export async function getWorkshopRegistrations(workshopSlug: string): Promise<any[]> {
+export async function getWorkshopRegistrations(workshopSlug: string): Promise<Record<string, unknown>[]> {
   if (!db) return [];
 
   try {
@@ -273,7 +271,7 @@ export async function getWorkshopRegistrations(workshopSlug: string): Promise<an
 
     return snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data(),
+      ...(doc.data() as Record<string, unknown>),
     }));
   } catch (error) {
     console.error('Error fetching workshop registrations:', error);

@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    let lenis: any
+    let lenis: { raf?: (time: number) => void; destroy?: () => void } | null = null
 
     const initLenis = async () => {
       const Lenis = (await import('@studio-freight/lenis')).default
@@ -15,7 +15,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       })
 
       function raf(time: number) {
-        lenis.raf(time)
+        lenis?.raf?.(time)
         requestAnimationFrame(raf)
       }
 
@@ -25,9 +25,9 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     initLenis()
 
     return () => {
-      lenis?.destroy()
+      lenis?.destroy?.()
     }
-  }, [])
+  }, []) 
 
   return <>{children}</>
 }

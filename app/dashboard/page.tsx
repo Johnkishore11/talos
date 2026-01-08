@@ -13,11 +13,11 @@ interface Registration {
   id: string;
   eventName: string;
   eventSlug: string;
-  registrationDate: any;
+  registrationDate?: { toDate?: () => Date } | string | null;
   paymentStatus: 'pending' | 'completed' | 'not_required';
   paymentAmount: number;
   teamName?: string;
-}
+} 
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -201,8 +201,10 @@ export default function DashboardPage() {
                       )}
                       <p className="text-sm text-gray-500">
                         Registered on:{' '}
-                        {registration.registrationDate?.toDate
-                          ? new Date(registration.registrationDate.toDate()).toLocaleDateString()
+                        {typeof registration.registrationDate === 'object' && registration.registrationDate !== null && 'toDate' in registration.registrationDate && (registration.registrationDate as { toDate: () => Date }).toDate
+                          ? new Date((registration.registrationDate as { toDate: () => Date }).toDate()).toLocaleDateString()
+                          : typeof registration.registrationDate === 'string' && registration.registrationDate
+                          ? new Date(registration.registrationDate).toLocaleDateString()
                           : 'N/A'}
                       </p>
                     </div>

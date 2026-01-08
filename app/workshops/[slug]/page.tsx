@@ -11,7 +11,9 @@ import { useAuth } from "@/hooks/useAuth";
 
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay?: {
+      new (options: Record<string, unknown>): { open: () => void };
+    };
   }
 }
 

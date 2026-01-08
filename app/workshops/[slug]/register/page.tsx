@@ -8,7 +8,9 @@ import { api, type Workshop, type WorkshopRegistrationRequest } from '@/lib/api'
 
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay?: {
+      new (options: Record<string, unknown>): { open: () => void };
+    };
   }
 }
 
@@ -160,7 +162,7 @@ export default function WorkshopRegistrationPage() {
         name: 'TALOS',
         description: `Registration for ${workshopData.title}`,
         order_id: orderData.order_id,
-        handler: async function (response: any) {
+        handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
           try {
             // Verify payment with registration data
             await api.verifyWorkshopPayment(workshopSlug, {
@@ -195,7 +197,13 @@ export default function WorkshopRegistrationPage() {
         }
       };
 
-      const razorpay = new window.Razorpay(options);
+      const RazorpayCtor = window.Razorpay;
+      if (!RazorpayCtor) {
+        alert('Payment gateway is not available. Please try again later.');
+        setSubmitting(false);
+        return;
+      }
+      const razorpay = new RazorpayCtor(options);
       razorpay.open();
     } catch (error) {
       console.error('Error initiating payment:', error);

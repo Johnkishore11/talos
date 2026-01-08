@@ -7,13 +7,14 @@ import PerspectiveCarousel from "@/components/ui/PerspectiveCarousel";
 import { api, type Event } from "@/lib/api";
 
 export default function PreviewSection() {
-  const [items, setItems] = useState<any[]>([]);
+  type PreviewItem = { title: string; desc: string; tag: string; image: string };
+  const [items, setItems] = useState<PreviewItem[]>([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const events = await api.getEvents();
-        const mappedItems = events.map((e) => ({
+        const mappedItems = events.map((e: Event) => ({
           title: e.title,
           desc: e.description,
           tag: e.category,

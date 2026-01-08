@@ -137,7 +137,7 @@ export default function ProfilePage() {
                       <p className="text-gray-400 text-sm">Leader: {reg.leader_name}</p>
                       {reg.members && reg.members.length > 0 && (
                         <p className="text-gray-500 text-xs mt-1">
-                          Members: {reg.members.map((m: any) => m.name).join(', ')}
+                          Members: {reg.members.map((m: { name?: string }) => m.name || '').filter(Boolean).join(', ')}
                         </p>
                       )}
                     </div>

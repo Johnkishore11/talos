@@ -19,7 +19,7 @@ export default function Footer() {
             <div className="text-xs text-[#ff0000] font-semibold select-none tracking-wider">
               user@talos-5.0-2026
             </div>
-            <div className="w-14" /> {/* Spacer for centering title */}
+            <div className="w-14">{/* Spacer for centering title */}</div>
           </div>
 
           {/* Terminal Body */}
@@ -62,7 +62,7 @@ export default function Footer() {
                     ></iframe>
                   </div>
                   <div className="text-[#FFFFFF] text-sm">
-                    <span className="text-[#FFFFFF] inline-block mr-2">//</span> 
+                    <span className="text-[#FFFFFF] inline-block mr-2">{'//'}</span>
                     Sarathy Nagar,Kundrathur,Chennai-600100
                   </div>
                 </div>
@@ -154,7 +154,7 @@ export default function Footer() {
         </div>
         
         <div className="text-center mt-8 text-[#b6b6b6] text-xs">
-           /* DESIGNED & DEVELOPED BY DEVELOPER KULU */
+           {/* DESIGNED & DEVELOPED BY DEVELOPER KULU */}
         </div>
       </div>
     </footer>

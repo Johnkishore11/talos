@@ -49,11 +49,11 @@ const RollingGallery = ({ autoplay = false, pauseOnHover = false, images = [] }:
   const controls = useAnimation();
   const autoplayRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const handleDrag = (_: any, info: PanInfo) => {
+  const handleDrag = (_: unknown, info: PanInfo) => {
     rotation.set(rotation.get() + info.offset.x * dragFactor);
   };
 
-  const handleDragEnd = (_: any, info: PanInfo) => {
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
     controls.start({
       rotateY: rotation.get() + info.velocity.x * dragFactor,
       transition: {
@@ -64,7 +64,7 @@ const RollingGallery = ({ autoplay = false, pauseOnHover = false, images = [] }:
         ease: "easeOut",
       },
     });
-  };
+  }; 
 
   const transform = useTransform(rotation, (value) => {
     return `rotate3d(0, 1, 0, ${value}deg)`;
