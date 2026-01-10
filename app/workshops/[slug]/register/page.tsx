@@ -264,7 +264,7 @@ export default function WorkshopRegistrationPage() {
         </div>
 
         {/* Registration Form */}
-        <form onSubmit={handleSubmit} className="bg-black/40 backdrop-blur-sm border border-red-900/30 rounded-2xl p-8 shadow-2xl">
+        <form className="bg-black/40 backdrop-blur-sm border border-red-900/30 rounded-2xl p-8 shadow-2xl">
           <h3 className="text-2xl font-bold text-white mb-6 border-b border-red-900/50 pb-4">
             Personal Information
           </h3>
@@ -378,6 +378,7 @@ export default function WorkshopRegistrationPage() {
           <div className="mt-8 pt-6 border-t border-red-900/50">
             <button
               type="submit"
+              onClick={handleSubmit}
               disabled={submitting || !!emailError}
               className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
             >

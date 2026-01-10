@@ -52,12 +52,12 @@ export default function RootLayout({
       <body className={`min-h-screen flex flex-col ${pressStart2P.variable} ${orbitron.variable} ${wallpoet.variable} ${zenDots.variable} ${ibmPlexMono.variable}`}>
         <CustomCursor />
         <Ribbons
-          baseThickness={15}
+          baseThickness={12}
           colors={['#ff0000']}
-          speedMultiplier={0.5}
-          maxAge={500}
+          speedMultiplier={1.2}
+          maxAge={600}
           enableFade={false}
-          enableShaderEffect={true}
+          enableShaderEffect={false}
         />
         <SmoothScroll>
           <Navbar />
