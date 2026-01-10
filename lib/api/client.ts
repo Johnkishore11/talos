@@ -99,27 +99,17 @@ class ApiClient {
     return this.request<Workshop>(`/api/workshops/${workshopId}`);
   }
 
-  async createWorkshopOrder(
+  async createWorkshopPaymentLink(
     workshopId: string,
     registration: WorkshopRegistrationRequest
-  ): Promise<CreateOrderResponse> {
-    return this.request<CreateOrderResponse>(
-      `/api/workshops/${workshopId}/create-order`,
+  ): Promise<{ payment_link_id: string; short_url: string; amount: number; reference_id: string }> {
+    return this.request(
+      `/api/workshops/${workshopId}/create-payment-link`,
       {
         method: "POST",
         body: JSON.stringify(registration),
       }
     );
-  }
-
-  async verifyWorkshopPayment(
-    workshopId: string,
-    verification: PaymentVerificationRequest
-  ): Promise<{ message: string; registration_id: string }> {
-    return this.request(`/api/workshops/${workshopId}/verify-payment`, {
-      method: "POST",
-      body: JSON.stringify(verification),
-    });
   }
 
   async checkWorkshopEmail(

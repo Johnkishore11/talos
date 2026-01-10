@@ -6,14 +6,6 @@ import { useEffect, useState } from 'react';
 import PageSection from '@/components/_core/layout/PageSection';
 import { api, type Workshop, type WorkshopRegistrationRequest } from '@/lib/api';
 
-declare global {
-  interface Window {
-    Razorpay?: {
-      new (options: Record<string, unknown>): { open: () => void };
-    };
-  }
-}
-
 export default function WorkshopRegistrationPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -60,20 +52,7 @@ export default function WorkshopRegistrationPage() {
     fetchWorkshop();
   }, [workshopSlug, router]);
 
-  // Load Razorpay script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
-
-  // Pre-fill user data
+// Pre-fill user data
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
@@ -151,63 +130,15 @@ export default function WorkshopRegistrationPage() {
         referral_id: formData.referralId || undefined,
       };
 
-      // Create order with registration data
-      const orderData = await api.createWorkshopOrder(workshopSlug, registrationData);
-
-      // Initialize Razorpay
-      const options = {
-        key: orderData.key_id,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        name: 'TALOS',
-        description: `Registration for ${workshopData.title}`,
-        order_id: orderData.order_id,
-        handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
-          try {
-            // Verify payment with registration data
-            await api.verifyWorkshopPayment(workshopSlug, {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              name: formData.name,
-              email: formData.email,
-              phone: formData.phone.replace(/\D/g, ''),
-              year: formData.year,
-              college_name: formData.collegeName,
-              referral_id: formData.referralId || undefined,
-            });
-            alert('Registration successful! Payment completed.');
-            router.push('/profile');
-          } catch (err) {
-            alert(err instanceof Error ? err.message : 'Payment verification failed');
-          }
-        },
-        prefill: {
-          email: formData.email,
-          name: formData.name,
-          contact: formData.phone,
-        },
-        theme: {
-          color: '#dc2626',
-        },
-        modal: {
-          ondismiss: function() {
-            setSubmitting(false);
-          }
-        }
-      };
-
-      const RazorpayCtor = window.Razorpay;
-      if (!RazorpayCtor) {
-        alert('Payment gateway is not available. Please try again later.');
-        setSubmitting(false);
-        return;
-      }
-      const razorpay = new RazorpayCtor(options);
-      razorpay.open();
+      // Create payment link
+      const paymentLink = await api.createWorkshopPaymentLink(workshopSlug, registrationData);
+      
+      // Redirect to payment link
+      window.location.href = paymentLink.short_url;
+      
     } catch (error) {
-      console.error('Error initiating payment:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to initiate payment. Please try again.';
+      console.error('Error creating payment link:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create payment link. Please try again.';
       alert(errorMessage);
       setSubmitting(false);
     }
