@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Container from "@/components/_core/layout/Container";
-import PerspectiveCarousel from "@/components/ui/PerspectiveCarousel";
+import DraggableEventsCarousel from "@/components/ui/DraggableEventsCarousel";
 import { api, type Event } from "@/lib/api";
 
 export default function PreviewSection() {
@@ -64,7 +64,7 @@ export default function PreviewSection() {
           For better UX, showing empty or spinner is better than crashing or old data.
       */}
       {hasItems ? (
-        <PerspectiveCarousel items={items} />
+        <DraggableEventsCarousel items={items} />
       ) : (
          <div className="flex h-64 items-center justify-center text-gray-500">
             <p>Loading events...</p>

@@ -1,5 +1,7 @@
 /* Tailwind v4 entry */
+/* Preconnect and optimize font loading - move to layout.tsx head if possible */
 @import url('https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 @import url('https://fonts.cdnfonts.com/css/dseg14-classic');
 @import "tailwindcss";
@@ -40,7 +42,19 @@ html,
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: "BBH Bartle", sans-serif;
+  font-family: var(--font-zen-dots), "Righteous", sans-serif;
+  /* Performance optimizations */
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Use contain for heavy animation elements */
+.contain-paint {
+  contain: paint;
+}
+
+.contain-layout {
+  contain: layout style paint;
 }
 
 .bbh-bartle-regular {

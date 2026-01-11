@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
+  
+  // Optimize images
   images: {
     remotePatterns: [
       {
@@ -14,7 +15,31 @@ const nextConfig: NextConfig = {
         hostname: '*.googleusercontent.com',
       },
     ],
+    // Use modern image formats
+    formats: ['image/avif', 'image/webp'],
+    // Reduce image sizes
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
+  
+  // Enable experimental features for better performance
+  experimental: {
+    // Optimize package imports to reduce bundle size
+    optimizePackageImports: ['motion/react', 'lucide-react', 'gsap'],
+  },
+  
+  // Compiler optimizations
+  compiler: {
+    // Remove console.log in production
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
+  // Enable compression
+  compress: true,
+  
+  // Power hints for better resource loading
+  poweredByHeader: false,
 };
 
 export default nextConfig;

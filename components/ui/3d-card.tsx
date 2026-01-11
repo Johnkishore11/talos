@@ -25,11 +25,36 @@ export const CardContainer = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMouseEntered, setIsMouseEntered] = useState(false);
+  const rectRef = useRef<DOMRect | null>(null);
+
+  useEffect(() => {
+    const updateRect = () => {
+       if (containerRef.current) {
+          rectRef.current = containerRef.current.getBoundingClientRect();
+       }
+    };
+    if (isMouseEntered) { // Only listen when interacting
+        window.addEventListener('scroll', updateRect);
+        window.addEventListener('resize', updateRect);
+    }
+    return () => {
+        window.removeEventListener('scroll', updateRect);
+        window.removeEventListener('resize', updateRect);
+    };
+  }, [isMouseEntered]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
-    const { left, top, width, height } =
-      containerRef.current.getBoundingClientRect();
+    
+    // Performance: Use cached rect or update if missing, prevent reflow on every move
+    if (!rectRef.current) {
+        rectRef.current = containerRef.current.getBoundingClientRect();
+    }
+    const { left, top, width, height } = rectRef.current;
+    
+    // Safety check if rect is zero (hidden)
+    if (width === 0 || height === 0) return;
+
     const x = (e.clientX - left - width / 2) / 25;
     const y = (e.clientY - top - height / 2) / 25;
     containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
@@ -37,7 +62,9 @@ export const CardContainer = ({
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsMouseEntered(true);
-    if (!containerRef.current) return;
+    if (containerRef.current) {
+         rectRef.current = containerRef.current.getBoundingClientRect();
+    }
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {

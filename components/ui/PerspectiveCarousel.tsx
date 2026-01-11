@@ -30,7 +30,24 @@ export default function PerspectiveCarousel({ items }: PerspectiveCarouselProps)
     let scrollPos = container.scrollLeft;
     const speed = 1.4; // Slightly slower speed
 
+    let isVisible = false;
+    // Performance: Pause when not in view
+    const observer = new IntersectionObserver((entries) => {
+        isVisible = entries[0].isIntersecting;
+        if (isVisible) {
+             // Restart loop if needed, though we check isVisible inside animate
+             if (!animationFrameId) animationFrameId = requestAnimationFrame(animate);
+        }
+    });
+    observer.observe(container);
+
     const animate = () => {
+      if (!isVisible) {
+         // Stop the loop, observer will restart it
+         animationFrameId = 0;
+         return; 
+      }
+      
       scrollPos += speed;
       if (scrollPos >= (items.length * (CARD_WIDTH + CARD_GAP))) {
           scrollPos = 0;
@@ -42,7 +59,10 @@ export default function PerspectiveCarousel({ items }: PerspectiveCarouselProps)
     };
 
     animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
+    return () => {
+        cancelAnimationFrame(animationFrameId);
+        observer.disconnect();
+    };
   }, [items.length]);
 
   // Triple items for infinite scroll illusion

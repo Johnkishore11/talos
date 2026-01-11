@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { CometCard } from "@/components/ui/comet-card";
+import { useInView } from "motion/react";
 
 type CardItem = {
   title: string;
@@ -18,12 +19,17 @@ export function InfiniteCometCards({
   direction?: "left" | "right";
 }) {
   const [paused, setPaused] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef);
 
   // Duplicate twice → required for gapless motion
   const loopItems = [...items, ...items, ...items];
 
+  const shouldAnimate = !paused && isInView;
+
   return (
     <div
+      ref={containerRef}
       className="relative overflow-hidden py-16"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -39,7 +45,7 @@ export function InfiniteCometCards({
             animationDuration: "45s",
             animationTimingFunction: "linear",
             animationIterationCount: "infinite",
-            animationPlayState: paused ? "paused" : "running",
+            animationPlayState: shouldAnimate ? "running" : "paused",
           }}
         >
           {loopItems.map((item, idx) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, memo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 type TimeLeft = {
@@ -21,35 +21,24 @@ const getTimeLeft = (targetDate: number): TimeLeft => {
     };
 };
 
-function FlipUnit({ value, label, opacityLabel }: { value: number; label: string; opacityLabel?: number | import('framer-motion').MotionValue<number> }) {
+// Memoize FlipUnit to prevent unnecessary re-renders
+const FlipUnit = memo(function FlipUnit({ value, label, opacityLabel }: { value: number; label: string; opacityLabel?: number | import('framer-motion').MotionValue<number> }) {
     const padded = String(value).padStart(2, "0");
-    // Ghost numbers to create the "digital clock" empty segment effect
     const ghost = "~~";
-
-    const baseTextClass = "absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 italic text-lg md:text-4xl tracking-widest leading-none font-dseg";
-
-    // Active text with intense glow
-    const textClass = `${baseTextClass} text-[#ff0000] drop-shadow-[0_0_15px_rgba(255,0,0,0.9)] z-10`;
-
-    // Ghost text (inactive segments)
-    const ghostClass = `${baseTextClass} text-[#2a0a0a] z-0 select-none opacity-100`;
 
     return (
         <div className="flex flex-col items-center group">
-            {/* LED Display Panel */}
             <div className="w-10 h-14 md:w-24 md:h-32 relative bg-black border-4 border-[#1a1a1a] rounded-sm shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] overflow-hidden">
-                {/* Inner shadow/glare overlay */}
                 <div className="absolute inset-0 pointer-events-none z-20 bg-[linear-gradient(180deg,rgba(255,255,255,0.03)_0%,transparent_50%,rgba(0,0,0,0.2)_100%)]"></div>
-
                 <div className="w-full h-full relative flex items-center justify-center transform -skew-x-6 scale-90">
-                    {/* Ghost Segments */}
-                    <span className={ghostClass}>{ghost}</span>
-
-                    {/* Active Segments */}
-                    <span className={textClass}>{padded}</span>
+                    <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 italic text-lg md:text-4xl tracking-widest leading-none font-dseg text-[#2a0a0a] z-0 select-none opacity-100">
+                        {ghost}
+                    </span>
+                    <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 italic text-lg md:text-4xl tracking-widest leading-none font-dseg text-[#ff0000] drop-shadow-[0_0_15px_rgba(255,0,0,0.9)] z-10">
+                        {padded}
+                    </span>
                 </div>
             </div>
-
             <motion.span
                 style={{ opacity: opacityLabel }}
                 className="mt-2 text-[8px] md:text-base uppercase text-red-500 font-bold tracking-[0.2em] font-orbitron drop-shadow-md"
@@ -58,7 +47,7 @@ function FlipUnit({ value, label, opacityLabel }: { value: number; label: string
             </motion.span>
         </div>
     );
-}
+});
 
 export default function CountdownSection() {
     const targetDate = new Date("2026-02-14T00:00:00").getTime();

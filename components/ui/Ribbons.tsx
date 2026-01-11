@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Renderer, Transform, Vec3, Color, Polyline } from 'ogl';
 
 import './Ribbons.css';
@@ -27,7 +27,7 @@ const Ribbons: React.FC<RibbonsProps> = ({
   baseThickness = 2,
   offsetFactor = 0.1,
   maxAge = 500,
-  pointCount = 50,
+  pointCount = 30, // Reduced from 50 for better performance
   speedMultiplier = 0.6,
   enableFade = false,
   enableShaderEffect = false,
@@ -35,12 +35,27 @@ const Ribbons: React.FC<RibbonsProps> = ({
   backgroundColor = [0, 0, 0, 0]
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const isVisibleRef = useRef(true);
+  
+  // Track visibility for pausing animation when tab is hidden
+  useEffect(() => {
+    const handleVisibility = () => {
+      const visible = document.visibilityState === 'visible';
+      setIsVisible(visible);
+      isVisibleRef.current = visible;
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const renderer = new Renderer({ dpr: window.devicePixelRatio || 2, alpha: true });
+    // Performance fix: Cap DPR at 1.5 to save GPU resources
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const renderer = new Renderer({ dpr, alpha: true });
     const gl = renderer.gl;
     if (Array.isArray(backgroundColor) && backgroundColor.length === 4) {
       gl.clearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3]);
@@ -209,10 +224,19 @@ const Ribbons: React.FC<RibbonsProps> = ({
     const tmp = new Vec3();
     let frameId: number;
     let lastTime = performance.now();
+    let frameCount = 0;
+    const FRAME_SKIP = 2; // Only update every 2nd frame for 30fps effective rate
+    
     function update() {
       frameId = requestAnimationFrame(update);
+      
+      // Skip frames when not visible or to reduce load
+      if (!isVisibleRef.current) return;
+      frameCount++;
+      if (frameCount % FRAME_SKIP !== 0) return;
+      
       const currentTime = performance.now();
-      const dt = currentTime - lastTime;
+      const dt = (currentTime - lastTime) * FRAME_SKIP; // Compensate for skipped frames
       lastTime = currentTime;
 
       lines.forEach(line => {

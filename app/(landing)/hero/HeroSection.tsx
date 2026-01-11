@@ -24,6 +24,7 @@ export default function HeroSection() {
               revealDirection="center"
               speed={100}
               maxIterations={20}
+              style={{ fontFamily: "'BBH Bartle', cursive" }}
             />
           </h1>
         </div>

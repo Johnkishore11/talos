@@ -45,6 +45,7 @@ export default function DecryptedText({
   parentClassName = '',
   encryptedClassName = '',
   animateOn = 'hover',
+  style,
   ...props
 }: DecryptedTextProps) {
   const [displayText, setDisplayText] = useState<string>(text);
@@ -203,15 +204,21 @@ export default function DecryptedText({
       : {};
 
   return (
-    <motion.span className={parentClassName} ref={containerRef} style={styles.wrapper} {...hoverProps} {...props}>
+    <motion.span 
+      className={parentClassName} 
+      ref={containerRef} 
+      style={{ ...styles.wrapper, fontFamily: "'BBH Bartle', cursive", ...style }} 
+      {...hoverProps} 
+      {...props}
+    >
       <span style={styles.srOnly}>{displayText}</span>
 
-      <span aria-hidden="true">
+      <span aria-hidden="true" style={{ fontFamily: 'inherit' }}>
         {displayText.split('').map((char, index) => {
           const isRevealedOrDone = revealedIndices.has(index) || !isScrambling || !isHovering;
 
           return (
-            <span key={index} className={isRevealedOrDone ? className : encryptedClassName}>
+            <span key={index} className={isRevealedOrDone ? className : encryptedClassName} style={{ fontFamily: 'inherit' }}>
               {char}
             </span>
           );

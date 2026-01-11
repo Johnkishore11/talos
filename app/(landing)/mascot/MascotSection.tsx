@@ -2,41 +2,40 @@
 
 import Image from "next/image";
 import logo from "./../../../app/taloslogo.png";
-import { useRef } from "react";
+import { useRef, memo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import ScrollFloat from "@/components/ui/ScrollFloat";
 
-export default function MascotSection() {
+const MascotSection = memo(function MascotSection() {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
   });
 
-  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [15, 0, -15]);
-  const rotateY = useTransform(scrollYProgress, [0, 0.5, 1], [-15, 0, 15]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.8]);
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  // Simplified transforms - fewer intermediate values
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 1, 0.85]);
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const opacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
-    <section ref={containerRef} className="relative w-full bg-black overflow-hidden perspective-1000">
+    <section ref={containerRef} className="relative w-full bg-black overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-red-950/40" />
 
-      <div className="absolute right-1/3 top-1/2 -translate-y-1/2 w-[300px] md:w-[650px] h-[300px] md:h-[650px] bg-red-600/25 blur-[100px] md:blur-[180px] rounded-full pointer-events-none" />
+      <div 
+        className="absolute right-1/3 top-1/2 -translate-y-1/2 w-[300px] md:w-[650px] h-[300px] md:h-[650px] bg-red-600/25 blur-[100px] md:blur-[180px] rounded-full pointer-events-none" 
+        style={{ willChange: 'auto' }}
+      />
 
       <div className="relative z-10 container mx-auto px-6 py-20 md:py-32">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
 
-          <div className="flex justify-center md:justify-start perspective-1000">
+          <div className="flex justify-center md:justify-start">
             <motion.div
               style={{
-                rotateX,
-                rotateY,
                 scale,
                 y,
                 opacity,
-                transformStyle: "preserve-3d",
               }}
               className="relative w-full max-w-[280px] md:max-w-none flex justify-center"
             >
@@ -109,4 +108,6 @@ export default function MascotSection() {
       </div>
     </section>
   );
-}
+});
+
+export default MascotSection;
