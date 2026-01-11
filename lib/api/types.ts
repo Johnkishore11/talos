@@ -16,6 +16,10 @@ export interface Event {
   rules?: string[];
   status: "open" | "closed" | "cancelled";
   created_at: string;
+  organiser?: {
+    name: string;
+    contact: string[];
+  };
 }
 
 // Team Member for event registration (1-3 members)

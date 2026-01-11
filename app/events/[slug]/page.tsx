@@ -173,6 +173,37 @@ export default function EventDetailPage() {
                 )}
               </div>
 
+              {/* Organiser Details Box */}
+              {event.organiser && event.organiser.name && (
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <h5 className="text-lg font-bold font-zen-dots text-[#dc2626] mb-3">
+                    Organiser Details
+                  </h5>
+                  <div className="space-y-3 text-base font-bold font-ibm-plex-mono">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Name</span>
+                      <span className="text-white">{event.organiser.name}</span>
+                    </div>
+                    {event.organiser.contact && event.organiser.contact.length > 0 && (
+                      <div>
+                        <span className="text-gray-500 block mb-1">Contact No</span>
+                        <div className="space-y-1 text-right">
+                          {event.organiser.contact.map((contact, index) => (
+                            <a
+                              key={index}
+                              href={`tel:${contact}`}
+                              className="text-white hover:text-red-500 transition-colors block"
+                            >
+                              {contact}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={handleRegister}
                 disabled={registering || event.status !== "open"}

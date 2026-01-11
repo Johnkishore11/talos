@@ -22,13 +22,20 @@ const getTimeLeft = (targetDate: number): TimeLeft => {
 };
 
 // Memoize FlipUnit to prevent unnecessary re-renders
-const FlipUnit = memo(function FlipUnit({ value, label, opacityLabel }: { value: number; label: string; opacityLabel?: number | import('framer-motion').MotionValue<number> }) {
+const FlipUnit = memo(function FlipUnit({ value, label, opacityLabel, bgOpacity }: { value: number; label: string; opacityLabel?: number | import('framer-motion').MotionValue<number>; bgOpacity?: import('framer-motion').MotionValue<number> }) {
     const padded = String(value).padStart(2, "0");
     const ghost = "~~";
 
     return (
-        <div className="flex flex-col items-center group">
-            <div className="w-12 h-16 md:w-24 md:h-32 relative bg-black border-4 border-[#1a1a1a] rounded-sm shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] overflow-hidden">
+        <div className="flex flex-col items-center group relative">
+            {/* Black background that appears after shrinking */}
+            {bgOpacity && (
+                <motion.div
+                    style={{ opacity: bgOpacity }}
+                    className="absolute -inset-1 bg-black rounded-lg border border-red-900/50"
+                />
+            )}
+            <div className="w-12 h-16 md:w-24 md:h-32 relative bg-black border-4 border-[#1a1a1a] rounded-sm shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] overflow-hidden z-10">
                 <div className="absolute inset-0 pointer-events-none z-20 bg-[linear-gradient(180deg,rgba(255,255,255,0.03)_0%,transparent_50%,rgba(0,0,0,0.2)_100%)]"></div>
                 <div className="w-full h-full relative flex items-center justify-center transform -skew-x-6 scale-90">
                     <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 italic text-lg md:text-4xl tracking-widest leading-none font-dseg text-[#2a0a0a] z-0 select-none opacity-100">
@@ -41,7 +48,7 @@ const FlipUnit = memo(function FlipUnit({ value, label, opacityLabel }: { value:
             </div>
             <motion.span
                 style={{ opacity: opacityLabel }}
-                className="mt-2 text-[8px] md:text-base uppercase text-red-500 font-bold tracking-[0.2em] font-orbitron drop-shadow-md"
+                className="mt-2 text-[8px] md:text-base uppercase text-red-500 font-bold tracking-[0.2em] font-orbitron drop-shadow-md z-10"
             >
                 {label}
             </motion.span>
@@ -124,6 +131,9 @@ export default function CountdownSection() {
     // Fade out label earlier in the transition
     const opacityLabel = useTransform(scrollY, [triggerStart, triggerStart + 150], [1, 0]);
 
+    // Background opacity for shrunk state
+    const bgOpacity = useTransform(scrollY, [triggerStart, triggerEnd], [0, 1]);
+
     return (
         <>
             {/* Placeholder to reserve space and measure position */}
@@ -159,6 +169,7 @@ export default function CountdownSection() {
                             <FlipUnit
                                 value={isMounted ? (value as number) : 0}
                                 label={label}
+                                bgOpacity={bgOpacity}
                             />
                             {/* Add blinking colon if not the last item */}
                             {index < labelMap.length - 1 && (
