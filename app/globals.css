@@ -93,7 +93,7 @@ body {
 }
 
 .neon-text-red {
-  text-shadow: 0 0 5px #dc2626, 0 0 10px #dc2626, 0 0 20px #dc2626;
+  text-shadow: none;
 }
 
 /* Hide default cursor (intentional design) */
