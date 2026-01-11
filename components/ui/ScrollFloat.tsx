@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useMemo, useRef, ReactNode, RefObject, memo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, ReactNode, RefObject, memo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -33,14 +33,13 @@ const ScrollFloat: React.FC<ScrollFloatProps> = memo(function ScrollFloat({
   as: Tag = 'h2'
 }) {
   const containerRef = useRef<HTMLHeadingElement>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
 
   // Memoize split text to prevent re-computation
   const splitText = useMemo(() => {
     const text = typeof children === 'string' ? children : '';
     // Limit character animation for very long texts
     const chars = text.split('');
-    const maxChars = 100; // Cap at 100 characters for performance
+    const maxChars = 300; // Cap at 300 characters for performance
     const displayChars = chars.length > maxChars ? chars.slice(0, maxChars) : chars;
     
     return displayChars.map((char, index) => (
@@ -52,7 +51,7 @@ const ScrollFloat: React.FC<ScrollFloatProps> = memo(function ScrollFloat({
 
   useEffect(() => {
     const el = containerRef.current;
-    if (!el || hasAnimated) return;
+    if (!el) return;
 
     const scroller = scrollContainerRef?.current || window;
     const charElements = el.querySelectorAll('.char');
@@ -85,8 +84,6 @@ const ScrollFloat: React.FC<ScrollFloatProps> = memo(function ScrollFloat({
           start: scrollStart,
           end: scrollEnd,
           scrub: true,
-          once: true, // Only animate once
-          onLeave: () => setHasAnimated(true),
         }
       }
     );
@@ -94,7 +91,7 @@ const ScrollFloat: React.FC<ScrollFloatProps> = memo(function ScrollFloat({
     return () => {
       tween.kill();
     };
-  }, [scrollContainerRef, animationDuration, ease, scrollStart, scrollEnd, stagger, hasAnimated]);
+  }, [scrollContainerRef, animationDuration, ease, scrollStart, scrollEnd, stagger]);
 
   return (
     <Tag ref={containerRef} className={`scroll-float ${containerClassName}`}>

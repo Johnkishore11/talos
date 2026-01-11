@@ -80,9 +80,9 @@ const MascotSection = memo(function MascotSection() {
                   as="span"
                   animationDuration={1}
                   ease='back.inOut(2)'
-                  scrollStart='center bottom+=50%'
+                  scrollStart='center bottom-=20%'
                   scrollEnd='bottom bottom-=40%'
-                  stagger={0.03}
+                  stagger={0.01}
                   containerClassName='inline-block'
                   textClassName='!text-sm md:!text-lg text-red-500 !leading-relaxed'
                 >
@@ -92,8 +92,8 @@ const MascotSection = memo(function MascotSection() {
                   as="span"
                   animationDuration={1}
                   ease='back.inOut(2)'
-                  scrollStart='center bottom+=50%'
-                  scrollEnd='bottom bottom-=40%'
+                  scrollStart='top bottom-=20%'
+                  scrollEnd='center center'
                   stagger={0.01}
                   containerClassName='inline'
                   textClassName='!text-sm md:!text-lg text-gray-300 !leading-relaxed text-left'
