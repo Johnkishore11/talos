@@ -92,17 +92,12 @@ export default function Footer() {
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF]">
                     <li>
-                      <a href="#" className="flex items-center gap-2 hover:text-red-400 transition-colors group">
+                      <a href="https://www.instagram.com/talos_cit/" className="flex items-center gap-2 hover:text-red-400 transition-colors group">
                         <span className="text-red-900 group-hover:text-red-500">@</span>Instagram
                       </a>
                     </li>
                     <li>
-                      <a href="#" className="flex items-center gap-2 hover:text-red-400 transition-colors group">
-                        <span className="text-red-900 group-hover:text-red-500">@</span>LinkedIn
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="flex items-center gap-2 hover:text-red-400 transition-colors group">
+                      <a href="https://www.youtube.com/watch?v=nT8EWTbimRs" className="flex items-center gap-2 hover:text-red-400 transition-colors group">
                         <span className="text-red-900 group-hover:text-red-500">@</span>YouTube
                       </a>
                     </li>

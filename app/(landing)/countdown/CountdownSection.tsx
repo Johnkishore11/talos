@@ -28,7 +28,7 @@ const FlipUnit = memo(function FlipUnit({ value, label, opacityLabel }: { value:
 
     return (
         <div className="flex flex-col items-center group">
-            <div className="w-10 h-14 md:w-24 md:h-32 relative bg-black border-4 border-[#1a1a1a] rounded-sm shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="w-12 h-16 md:w-24 md:h-32 relative bg-black border-4 border-[#1a1a1a] rounded-sm shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none z-20 bg-[linear-gradient(180deg,rgba(255,255,255,0.03)_0%,transparent_50%,rgba(0,0,0,0.2)_100%)]"></div>
                 <div className="w-full h-full relative flex items-center justify-center transform -skew-x-6 scale-90">
                     <span className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 italic text-lg md:text-4xl tracking-widest leading-none font-dseg text-[#2a0a0a] z-0 select-none opacity-100">
@@ -50,7 +50,7 @@ const FlipUnit = memo(function FlipUnit({ value, label, opacityLabel }: { value:
 });
 
 export default function CountdownSection() {
-    const targetDate = new Date("2026-02-14T00:00:00").getTime();
+    const targetDate = new Date("2026-02-04T08:00:00").getTime();
     const [isMounted, setIsMounted] = useState(false);
     const [time, setTime] = useState<TimeLeft>(() => getTimeLeft(targetDate));
 
@@ -60,6 +60,7 @@ export default function CountdownSection() {
     const [originY, setOriginY] = useState(0);
     const [sectionHeight, setSectionHeight] = useState(0);
     const [navHeight, setNavHeight] = useState(0);
+    const [targetScale, setTargetScale] = useState(0.4);
 
     useEffect(() => {
         setTimeout(() => setIsMounted(true), 0);
@@ -74,7 +75,10 @@ export default function CountdownSection() {
 
                 setOriginY(rect.top + window.scrollY);
                 setSectionHeight(rect.height);
-                setNavHeight(safeNavHeight);
+                // Reduce navHeight for mobile to move it higher up
+                const mobileNavHeight = window.innerWidth < 768 ? 45 : safeNavHeight;
+                setNavHeight(mobileNavHeight);
+                setTargetScale(window.innerWidth < 768 ? 1.0 : 0.4);
             }
         };
 
@@ -109,13 +113,13 @@ export default function CountdownSection() {
     // Top position: 
     // At 0 scroll: centerY (absolute pos)
     // At triggerStart: centerY - triggerStart (visually same place)
-    // At triggerEnd: navHeight + 20 (new fixed pos)
-    const topPos = useTransform(scrollY, scrollRange, [centerY, centerY - triggerStart, navHeight + 20]);
+    // At triggerEnd: navHeight + 5 (new fixed pos)
+    const topPos = useTransform(scrollY, scrollRange, [centerY, centerY - triggerStart, navHeight + 5]);
 
-    const right = useTransform(scrollY, scrollRange, ["50%", "50%", "2%"]);
+    const right = useTransform(scrollY, scrollRange, ["50%", "50%", "0%"]);
     const translateX = useTransform(scrollY, scrollRange, ["50%", "50%", "0%"]);
     const y = useTransform(scrollY, scrollRange, ["-50%", "-50%", "0%"]);
-    const scale = useTransform(scrollY, scrollRange, [1, 1, 0.4]);
+    const scale = useTransform(scrollY, scrollRange, [1, 1, targetScale]);
 
     // Fade out label earlier in the transition
     const opacityLabel = useTransform(scrollY, [triggerStart, triggerStart + 150], [1, 0]);
@@ -140,7 +144,7 @@ export default function CountdownSection() {
                     transformOrigin: "right top",
                     opacity: isMounted ? 1 : 0
                 }}
-                className="flex flex-col items-center pointer-events-none w-full md:w-auto"
+                className="flex flex-col items-center pointer-events-none w-auto"
             >
                 <motion.p
                     style={{ opacity: opacityLabel }}
