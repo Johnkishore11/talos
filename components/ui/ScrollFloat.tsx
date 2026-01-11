@@ -34,17 +34,19 @@ const ScrollFloat: React.FC<ScrollFloatProps> = memo(function ScrollFloat({
 }) {
   const containerRef = useRef<HTMLHeadingElement>(null);
 
-  // Memoize split text to prevent re-computation
+  // Memoize split text to prevent re-computation - wrap by words to prevent mid-word breaks
   const splitText = useMemo(() => {
     const text = typeof children === 'string' ? children : '';
-    // Limit character animation for very long texts
-    const chars = text.split('');
-    const maxChars = 300; // Cap at 300 characters for performance
-    const displayChars = chars.length > maxChars ? chars.slice(0, maxChars) : chars;
+    const words = text.split(' ');
     
-    return displayChars.map((char, index) => (
-      <span className="char" key={index}>
-        {char === ' ' ? '\u00A0' : char}
+    return words.map((word, wordIndex) => (
+      <span key={wordIndex} className="word" style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+        {word.split('').map((char, charIndex) => (
+          <span className="char" key={charIndex}>
+            {char}
+          </span>
+        ))}
+        {wordIndex < words.length - 1 && <span className="char">&nbsp;</span>}
       </span>
     ));
   }, [children]);

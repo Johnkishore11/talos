@@ -98,7 +98,7 @@ const MascotSection = memo(function MascotSection() {
                   containerClassName='inline'
                   textClassName='!text-sm md:!text-lg text-gray-300 !leading-relaxed text-left'
                 >
-                  is an annual occurrence conducted by the Department of Artificial Intelligence and Data Science to showcase the importance of the domain. A wave of fun and technical events will be conducted throughout the day.
+                  is an annual symposium conducted by the Department of Artificial Intelligence and Data Science to showcase the importance of the domain. A wave of fun and technical events will be conducted throughout the day.
                 </ScrollFloat>
               </div>
             </motion.div>
