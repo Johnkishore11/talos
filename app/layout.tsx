@@ -23,8 +23,19 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "College Symposium 2025",
-  description: "Official website for College Symposium 2025",
+  title: "Talos 5.0",
+  description: "Official website for Department of Artificial Intelligence and Data Science Symposium 2026",
+  icons: {
+    icon: [
+      { url: '/Logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/Logo.png', sizes: '192x192', type: 'image/png' },
+      { url: '/Logo.png', sizes: '512x512', type: 'image/png' },
+    ],
+    shortcut: '/Logo.png',
+    apple: [
+      { url: '/Logo.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -34,6 +45,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/Logo.png" type="image/png" sizes="32x32" />
+        <link rel="icon" href="/Logo.png" type="image/png" sizes="192x192" />
+        <link rel="apple-touch-icon" href="/Logo.png" sizes="180x180" />
+      </head>
       <body className={`min-h-screen flex flex-col ${zenDots.variable} ${ibmPlexMono.variable}`}>
         <CustomCursor />
         <Ribbons

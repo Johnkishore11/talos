@@ -77,11 +77,11 @@ export default function Footer() {
                     ./Navigation
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF]">
-                    <li><Link href="/" className="hover:text-red-400 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">Home</Link></li>
-                    <li><Link href="/events" className="hover:text-red-400 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">Events</Link></li>
-                    <li><Link href="/workshops" className="hover:text-red-400 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">Workshops</Link></li>
-                    <li><Link href="/gallery" className="hover:text-red-400 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">Gallery</Link></li>
-                    <li><Link href="/about" className="hover:text-red-400 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">About</Link></li>
+                    <li><Link href="/" className="hover:text-red-600 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">Home</Link></li>
+                    <li><Link href="/events" className="hover:text-red-600 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">Events</Link></li>
+                    <li><Link href="/workshops" className="hover:text-red-600 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">Workshops</Link></li>
+                    <li><Link href="/gallery" className="hover:text-red-600 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">Gallery</Link></li>
+                    <li><Link href="/about" className="hover:text-red-600 transition-colors hover:before:content-['>_'] hover:before:mr-2 hover:before:text-red-600">About</Link></li>
                   </ul>
                 </div>
 
@@ -117,15 +117,26 @@ export default function Footer() {
                   </div>
                 </div>
 
+                {/* Event Coordinators */}
+                <div className="space-y-4">
+                  <h3 className="text-red-500 font-bold border-b border-red-900/30 pb-2 inline-block">
+                    ./Event_Coordinators
+                  </h3>
+                  <ul className="space-y-2 text-[#FFFFFF] text-sm">
+                    <li><span className="text-red-600">Member 1:</span> <a href="tel:ph_no1" className="hover:text-red-600 transition-colors">ph no1</a></li>
+                    <li><span className="text-red-600">Member 2:</span> <a href="tel:ph_no2" className="hover:text-red-600 transition-colors">ph no2</a></li>
+                  </ul>
+                </div>
+
                 {/* Legal */}
                 <div className="space-y-4">
                   <h3 className="text-red-500 font-bold border-b border-red-900/30 pb-2 inline-block">
                     ./Legal
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF] text-sm">
-                    <li><Link href="#" className="hover:text-red-400 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Terms_of_Service</Link></li>
-                    <li><Link href="#" className="hover:text-red-400 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Privacy_Policy</Link></li>
-                    <li><Link href="#" className="hover:text-red-400 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Refund_Policy</Link></li>
+                    <li><Link href="#" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Terms_of_Service</Link></li>
+                    <li><Link href="#" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Privacy_Policy</Link></li>
+                    <li><Link href="#" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Refund_Policy</Link></li>
                   </ul>
                 </div>
               </div>
@@ -149,7 +160,7 @@ export default function Footer() {
         </div>
         
         <div className="text-center mt-8 text-[#b6b6b6] text-xs">
-           {/* DESIGNED & DEVELOPED BY DEVELOPER KULU */}
+           /* DESIGNED & DEVELOPED BY DEVELOPER KULU */
         </div>
       </div>
     </footer>

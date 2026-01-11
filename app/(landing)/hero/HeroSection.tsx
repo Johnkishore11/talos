@@ -1,10 +1,11 @@
 "use client"
 import { useState, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import Container from '@/components/_core/layout/Container';
 import DecryptedText from '@/components/ui/DecryptedText';
 import HolographicWave from '@/components/ui/HolographicWave';
+import HudBackground from '@/components/ui/HudBackground';
 
 export default function HeroSection() {
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
@@ -15,13 +16,18 @@ export default function HeroSection() {
 
   return (
     <section className='relative h-screen flex items-center justify-center overflow-hidden'>
+      <HudBackground opacity={0.6} showMap={true} />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/50" />
+      <div 
+        className="absolute right-1/3 top-1/2 -translate-y-1/2 w-[300px] md:w-[650px] h-[300px] md:h-[650px] bg-red-700/25 blur-[100px] md:blur-[180px] rounded-full pointer-events-none" 
+      />
       <HolographicWave />
       
       <Container className='text-center z-10'>
         
         <div className="relative inline-block mb-6">
           <span 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] md:text-[16rem] text-[#ff0000]/40 -z-10 whitespace-nowrap select-none pointer-events-none drop-shadow-[0_0_30px_rgba(255,0,0,0.8)]"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] md:text-[16rem] text-[#ff0000]/60 -z-10 whitespace-nowrap select-none pointer-events-none drop-shadow-[0_0_30px_rgba(255,0,0,0.8)]"
             style={{ fontFamily: '"Zen Dots", sans-serif' }}
           >
             5.0
@@ -45,7 +51,7 @@ export default function HeroSection() {
            transition={{ duration: 0.8, ease: "easeOut" }}
            className="mt-8 flex flex-col items-center gap-6"
         >
-           <p className="text-3xl md:text-4xl text-[#ff0000]/70 font-bold tracking-wider" style={{ fontFamily: '"Zen Dots", sans-serif' }}>Feb <span className='text-3xl md:text-4xl text-[#ffffff]/70 font-bold tracking-wider'>4</span> 2026</p>
+           <p className="text-3xl md:text-4xl text-[#ff0000]/90 font-bold tracking-wider" style={{ fontFamily: '"Zen Dots", sans-serif' }}>Feb <span className='text-3xl md:text-4xl text-[#ffffff]/90 font-bold tracking-wider'>4</span> 2026</p>
         </motion.div>
       </Container>
 
@@ -59,11 +65,17 @@ export default function HeroSection() {
              animate={{ y: [0, 10, 0] }}
              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
            >
-             <ChevronDown className="w-10 h-10 text-white/80" />
+             <Image 
+               src="https://img.icons8.com/?size=100&id=41202&format=png&color=FFFFFF" 
+               alt="Scroll down" 
+               width={40} 
+               height={40} 
+               className="opacity-90"
+             />
            </motion.div>
           <div className="space-y-2 text-center">
-            <p className="text-white/60 text-lg md:text-xl font-medium tracking-wide">Dept of Artificial Intelligence and Data Science</p>
-            <p className="text-white/40 text-sm md:text-base">Chennai Institute Of Technology</p>
+            <p className="text-white/80 text-lg md:text-xl font-medium tracking-wide">Dept of Artificial Intelligence and Data Science</p>
+            <p className="text-white/60 text-sm md:text-base">Chennai Institute Of Technology</p>
           </div>
       </motion.div>
     </section>

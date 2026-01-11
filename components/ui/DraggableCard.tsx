@@ -29,6 +29,7 @@ export const DraggableCardBody = memo(function DraggableCardBody({
   const mouseY = useMotionValue(0);
   const cardRef = useRef<HTMLDivElement>(null);
   const controls = useAnimationControls();
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [constraints, setConstraints] = useState({
     top: 0,
     left: 0,
@@ -54,6 +55,9 @@ export const DraggableCardBody = memo(function DraggableCardBody({
   );
 
   useEffect(() => {
+    // Detect touch device
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
     const updateConstraints = () => {
       if (typeof window !== "undefined") {
         setConstraints({
@@ -95,10 +99,12 @@ export const DraggableCardBody = memo(function DraggableCardBody({
   return (
     <motion.div
       ref={cardRef}
-      drag
+      drag={!isTouchDevice}
       dragConstraints={constraints}
       onDragStart={() => {
-        document.body.style.cursor = "grabbing";
+        if (!isTouchDevice) {
+          document.body.style.cursor = "grabbing";
+        }
       }}
       onDragEnd={(event, info) => {
         document.body.style.cursor = "default";

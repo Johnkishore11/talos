@@ -5,6 +5,7 @@ import logo from "./../../../app/taloslogo.png";
 import { useRef, memo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import ScrollFloat from "@/components/ui/ScrollFloat";
+import HudBackground from "@/components/ui/HudBackground";
 
 const MascotSection = memo(function MascotSection() {
   const containerRef = useRef<HTMLElement>(null);
@@ -20,6 +21,7 @@ const MascotSection = memo(function MascotSection() {
 
   return (
     <section ref={containerRef} className="relative w-full bg-black overflow-hidden">
+      <HudBackground />
       <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-red-950/40" />
 
       <div 
