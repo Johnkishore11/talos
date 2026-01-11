@@ -61,18 +61,18 @@ export default function EventsPage() {
     <FlipCard
       key={event.event_id}
       backContent={
-        <div className="flex min-h-full flex-col gap-2">
-          <h1 className="text-3xl font-bold text-red-600 zen-dots-regular">{event.title}</h1>
-          <p className="mt-1 border-t border-t-gray-200/20 py-4 text-base leading-normal ibm-plex-mono-semibold text-gray-300">
+        <div className="flex h-full flex-col gap-2">
+          <h1 className="text-2xl font-bold text-red-600 zen-dots-regular flex-shrink-0">{event.title}</h1>
+          <p className="border-t border-t-gray-200/20 pt-3 pb-2 text-sm leading-relaxed ibm-plex-mono-semibold text-gray-300 line-clamp-3 flex-grow overflow-hidden">
             {event.description}
           </p>
-          <div className="mt-auto flex flex-col gap-4">
+          <div className="flex flex-col gap-3 flex-shrink-0 mt-auto pt-2">
             <span className="w-fit text-xs font-mono text-red-500 bg-red-500/10 px-2 py-1 rounded">
               {event.date}, {event.time}
             </span>
             <Link 
               href={`/events/${event.event_id}`} 
-              className="w-full text-center px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-colors zen-dots-regular text-xl"
+              className="w-full text-center px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-colors zen-dots-regular text-lg"
             >
               View Details
             </Link>

@@ -70,7 +70,7 @@ export default function WorkshopsPage() {
                   <h1 className="text-3xl font-bold text-red-600 zen-dots-regular">
                     {workshop.title}
                   </h1>
-                  <p className="mt-1 border-t border-t-gray-200/20 py-4 text-base leading-normal ibm-plex-mono-semibold text-gray-300">
+                  <p className="mt-1 border-t border-t-gray-200/20 py-4 text-sm leading-relaxed ibm-plex-mono-semibold text-gray-300 line-clamp-3">
                     {workshop.description}
                   </p>
                   <div className="mt-auto flex flex-col gap-4">
