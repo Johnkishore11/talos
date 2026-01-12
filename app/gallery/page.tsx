@@ -2,23 +2,26 @@ import ParallaxScrollGallery from '@/components/ui/ParallaxScrollGallery';
 
 export default function GalleryPage() {
   const trailImages = [
-    "https://images.unsplash.com/photo-1526378722484-bd91ca387e72",
-    "https://images.unsplash.com/photo-1518770660439-4636190af475",
-    "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
-    "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    "https://images.unsplash.com/photo-1531482615713-2afd69097998",
-    "https://images.unsplash.com/photo-1581091870627-3a9c8c5c9b6b",
-    "https://images.unsplash.com/photo-1510511459019-5dda7724fd87",
-    "https://images.unsplash.com/photo-1559028012-481c04fa702d",
-    "https://images.unsplash.com/photo-1544197150-b99a580bb7a8",
-    "https://images.unsplash.com/photo-1621504450181-5d356f61d307"
+    "/images/event1.JPG",
+    "/images/event2.JPG",
+    "/images/inaugration.JPG",
+    "/images/paperpresentation.JPG",
+    "/images/plotathon.JPG",
+    "/images/workshop1.JPG",
+    "/images/nontech1.JPG",
+    "/images/students.JPG",
+    "/images/students1.JPG",
+    "/images/crew.JPG",
+    "/images/partha1.JPG",
+    "/images/partha2.JPG",
+    "/images/guest.JPG"
   ];
 
   const staticImages = [
-    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4",
-    "https://images.unsplash.com/photo-1511512578047-dfb367046420",
-    "https://images.unsplash.com/photo-1523580494863-6f3031224c94",
-    "https://images.unsplash.com/photo-1517048676732-d65bc937f952"
+    "/images/Chairman.JPG",
+    "/images/head.JPG",
+    "/images/HOD.JPG",
+    "/images/pongal.jpeg"
   ];
 
   return (
@@ -44,7 +47,7 @@ export default function GalleryPage() {
             muted
             loop
             playsInline
-            poster="https://images.unsplash.com/photo-1535498730771-e735b998cd64?q=80&w=2568&auto=format&fit=crop"
+            poster="/images/head.JPG"
           >
              <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4" />
              Your browser does not support the video tag.

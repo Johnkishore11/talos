@@ -27,15 +27,37 @@ export default function ProfilePage() {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        const [profileData, eventsData, workshopsData] = await Promise.all([
-          api.getUserProfile(),
-          api.getUserEvents(),
-          api.getUserWorkshops(),
-        ]);
-        setProfile(profileData);
-        setEventRegistrations(eventsData);
-        setWorkshopRegistrations(workshopsData);
+        console.log('Fetching user data for:', firebaseUser?.email);
+        
+        // Try API first
+        try {
+          const [profileData, eventsData, workshopsData] = await Promise.all([
+            api.getUserProfile(),
+            api.getUserEvents(),
+            api.getUserWorkshops(),
+          ]);
+          console.log('Events data received:', eventsData);
+          console.log('Workshops data received:', workshopsData);
+          setProfile(profileData);
+          setEventRegistrations(eventsData);
+          setWorkshopRegistrations(workshopsData);
+        } catch (apiError) {
+          console.error('API Error:', apiError);
+          // Fallback: Query Firestore directly
+          console.log('Falling back to direct Firestore query');
+          const { getUserEventRegistrations, getUserWorkshopRegistrations } = await import('@/lib/registrations');
+          const userEmail = firebaseUser?.email || '';
+          const [eventsData, workshopsData] = await Promise.all([
+            getUserEventRegistrations(userEmail),
+            getUserWorkshopRegistrations(userEmail),
+          ]);
+          console.log('Firestore events data:', eventsData);
+          console.log('Firestore workshops data:', workshopsData);
+          setEventRegistrations(eventsData as EventRegistration[]);
+          setWorkshopRegistrations(workshopsData as WorkshopRegistration[]);
+        }
       } catch (err) {
+        console.error('Error details:', err);
         setError(err instanceof Error ? err.message : "Failed to load profile");
         console.error("Error fetching user data:", err);
       } finally {
@@ -70,6 +92,7 @@ export default function ProfilePage() {
       <PageSection title="Profile" className="min-h-screen">
         <div className="flex flex-col items-center justify-center h-64 text-center">
           <p className="text-red-500 mb-4">{error}</p>
+          <p className="text-gray-400 text-sm mb-4">Check browser console for details</p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -109,9 +132,15 @@ export default function ProfilePage() {
             </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-600/20 text-red-500 rounded-lg hover:bg-red-600/30 transition-colors border border-red-600/50"
+              className="px-4 py-2 bg-red-600/20 text-red-500 rounded-lg hover:bg-red-600/30 transition-colors border border-red-600/50 mr-2"
             >
               Logout
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-600/20 text-blue-500 rounded-lg hover:bg-blue-600/30 transition-colors border border-blue-600/50"
+            >
+              Refresh
             </button>
           </div>
         </div>
@@ -122,7 +151,10 @@ export default function ProfilePage() {
             Event Registrations
           </h3>
           {eventRegistrations.length === 0 ? (
-            <p className="text-gray-400">No event registrations yet.</p>
+            <div>
+              <p className="text-gray-400">No event registrations yet.</p>
+              <p className="text-gray-500 text-xs mt-2">Debug: Check browser console for API response</p>
+            </div>
           ) : (
             <div className="space-y-4">
               {eventRegistrations.map((reg) => (
@@ -132,7 +164,7 @@ export default function ProfilePage() {
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-white font-bold">{reg.event_name || reg.event_id}</p>
+                      <p className="text-white font-bold">{reg.event_name || reg.event_id || 'Unknown Event'}</p>
                       <p className="text-gray-400 text-sm">Team: {reg.team_name}</p>
                       <p className="text-gray-400 text-sm">Leader: {reg.leader_name}</p>
                       {reg.members && reg.members.length > 0 && (
@@ -140,6 +172,7 @@ export default function ProfilePage() {
                           Members: {reg.members.map((m: { name?: string }) => m.name || '').filter(Boolean).join(', ')}
                         </p>
                       )}
+                      <p className="text-gray-500 text-xs mt-1">ID: {reg.registration_id}</p>
                     </div>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold ${

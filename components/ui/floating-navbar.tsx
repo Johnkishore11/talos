@@ -109,7 +109,7 @@ export const FloatingNav = ({
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           {user ? (
             <div className="flex items-center gap-2 sm:gap-3">
-              <Link href="/dashboard" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
+              <Link href="/profile" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
                 <span className="hidden md:block text-xs lg:text-sm font-bold text-white zen-dots-regular">
                     {user.displayName?.split(' ')[0]}
                 </span>

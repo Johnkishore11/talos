@@ -71,28 +71,36 @@ export interface WorkshopRegistrationData {
  * Searches across all event-specific collections
  */
 export async function getUserEventRegistrations(userEmail: string): Promise<unknown[]> {
-  if (!db) return [];
+  if (!db) {
+    console.error('Firestore DB not initialized');
+    return [];
+  }
 
   try {
+    console.log('Querying Firestore for user:', userEmail);
     const allRegistrations: unknown[] = [];
 
     // Get all events
     const eventsSnapshot = await getDocs(collection(db, 'events'));
+    console.log('Found events:', eventsSnapshot.size);
 
     // Check each event's registrations
     for (const eventDoc of eventsSnapshot.docs) {
       const eventId = eventDoc.id;
       const eventData = eventDoc.data();
+      console.log(`Checking registrations for event: ${eventId}`);
+      
       const registrationsRef = collection(db, `${eventId}_registrations`);
       
       // Search by leader_email
       const q = query(registrationsRef, where('leader_email', '==', userEmail));
       const registrationsSnapshot = await getDocs(q);
+      console.log(`Found ${registrationsSnapshot.size} registrations for ${eventId}`);
 
       registrationsSnapshot.forEach((doc) => {
         const data = doc.data() as Record<string, unknown>;
         allRegistrations.push({
-          id: doc.id,
+          registration_id: doc.id,
           event_name: eventData.title || eventId,
           event_id: eventId,
           ...data,
@@ -100,6 +108,7 @@ export async function getUserEventRegistrations(userEmail: string): Promise<unkn
       });
     }
 
+    console.log('Total registrations found:', allRegistrations.length);
     return allRegistrations;
   } catch (error) {
     console.error('Error fetching user event registrations:', error);
@@ -112,18 +121,25 @@ export async function getUserEventRegistrations(userEmail: string): Promise<unkn
  * Searches across all workshop-specific collections
  */
 export async function getUserWorkshopRegistrations(userEmail: string): Promise<unknown[]> {
-  if (!db) return [];
+  if (!db) {
+    console.error('Firestore DB not initialized');
+    return [];
+  }
 
   try {
+    console.log('Querying Firestore workshops for user:', userEmail);
     const allRegistrations: unknown[] = [];
 
     // Get all workshops
     const workshopsSnapshot = await getDocs(collection(db, 'workshops'));
+    console.log('Found workshops:', workshopsSnapshot.size);
 
     // Check each workshop's registrations
     for (const workshopDoc of workshopsSnapshot.docs) {
       const workshopId = workshopDoc.id;
       const workshopData = workshopDoc.data();
+      console.log(`Checking registrations for workshop: ${workshopId}`);
+      
       const registrationsRef = collection(db, `${workshopId}_registrations`);
       
       // Search by email and confirmed status
@@ -133,11 +149,12 @@ export async function getUserWorkshopRegistrations(userEmail: string): Promise<u
         where('status', '==', 'confirmed')
       );
       const registrationsSnapshot = await getDocs(q);
+      console.log(`Found ${registrationsSnapshot.size} registrations for ${workshopId}`);
 
       registrationsSnapshot.forEach((doc) => {
         const data = doc.data() as Record<string, unknown>;
         allRegistrations.push({
-          id: doc.id,
+          registration_id: doc.id,
           workshop_name: workshopData.title || workshopId,
           workshop_id: workshopId,
           ...data,
@@ -145,6 +162,7 @@ export async function getUserWorkshopRegistrations(userEmail: string): Promise<u
       });
     }
 
+    console.log('Total workshop registrations found:', allRegistrations.length);
     return allRegistrations;
   } catch (error) {
     console.error('Error fetching user workshop registrations:', error);
