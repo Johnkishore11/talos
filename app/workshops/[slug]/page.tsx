@@ -124,8 +124,8 @@ export default function WorkshopDetailPage() {
               <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
                 Overview
               </h3>
-              <p className="text-muted-foreground leading-relaxed font-ibm-plex-mono text-lg font-bold">
-                {workshop.description}
+              <p className="text-muted-foreground leading-relaxed font-ibm-plex-mono text-lg font-bold whitespace-pre-line">
+                {workshop.main_description || workshop.description}
               </p>
             </div>
 

@@ -110,8 +110,8 @@ export default function EventDetailPage() {
               <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
                 Description
               </h3>
-              <p className="text-muted-foreground leading-relaxed font-ibm-plex-mono text-lg font-bold">
-                {event.description}
+              <p className="text-muted-foreground leading-relaxed font-ibm-plex-mono text-lg font-bold whitespace-pre-line">
+                {event.main_description || event.description}
               </p>
             </div>
 

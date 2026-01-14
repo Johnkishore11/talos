@@ -4,6 +4,7 @@ export interface Event {
   event_id: string;
   title: string;
   description: string;
+  main_description?: string;
   category: string;
   date: string;
   time: string;
@@ -65,6 +66,7 @@ export interface Workshop {
   workshop_id: string;
   title: string;
   description: string;
+  main_description?: string;
   instructor: string;
   date: string;
   time: string;
