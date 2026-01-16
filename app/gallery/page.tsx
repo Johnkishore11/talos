@@ -37,14 +37,13 @@ export default function GalleryPage() {
       <div className="w-full max-w-7xl mx-auto mb-12 px-4 grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         
         {/* Left Half: Video Section */}
-        <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.2)] group min-h-[500px] flex items-center justify-center">
+        <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.2)] group min-h-[500px]">
           <iframe
-            src="https://www.instagram.com/reel/DGA8JS_PrnZ/embed"
+            src="https://www.youtube.com/embed/tXlZK30j_ao?autoplay=1&mute=1&loop=1&playlist=tXlZK30j_ao&controls=1"
             className="w-full h-full min-h-[500px]"
             frameBorder="0"
-            scrolling="no"
-            allowTransparency
-            allow="autoplay; encrypted-media"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
           />
         </div>
 
