@@ -9,7 +9,7 @@ const timelineEvents = [
     year: "4.0",
     title: "NEURAL NEXUS",
     description: "TALOS 4.0 explored the power of interconnected thinking. Inspired by neural systems, this edition emphasized collaboration, adaptability, and intelligent problem-solving. Every event reflected how modern technology thrives on connections—between people, data, and ideas.",
-    image: "/v3.png" // Placeholder/Fallback
+    image: "/images/inaugration.JPG"
   },
   {
     year: "3.0",
