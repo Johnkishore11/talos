@@ -135,8 +135,8 @@ export default function Footer() {
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF] text-sm">
                     <li><Link href="#" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Terms_of_Service</Link></li>
-                    <li><Link href="#" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Privacy_Policy</Link></li>
-                    <li><Link href="#" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Refund_Policy</Link></li>
+                    <li><Link href="/privacy-policy" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Privacy_Policy</Link></li>
+                    <li><Link href="/refund-policy" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Refund_Policy</Link></li>
                   </ul>
                 </div>
               </div>
