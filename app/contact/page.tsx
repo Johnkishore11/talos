@@ -55,7 +55,7 @@ export default function ContactPage() {
 
                 <div className="flex flex-col md:flex-row md:gap-4">
                   <span className="text-red-500 font-bold min-w-[240px]">Telephone No:</span>
-                  <a href="tel:8122185840" className="hover:text-red-400 transition-colors">8122185840</a>
+                  <a href="tel:7305401558" className="hover:text-red-400 transition-colors">7305401558</a>
                 </div>
 
                 <div className="flex flex-col md:flex-row md:gap-4">

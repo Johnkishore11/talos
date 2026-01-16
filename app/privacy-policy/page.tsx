@@ -58,10 +58,10 @@ export default function PrivacyPolicyPage() {
           </p>
           <div className="bg-muted/20 p-4 rounded-lg border border-white/5 space-y-2">
             <p className="text-gray-300 font-ibm-plex-mono">
-              <strong className="text-red-500">Email:</strong> support@talos.com
+              <strong className="text-red-500">Email:</strong> taloscit72@gmail.com
             </p>
             <p className="text-gray-300 font-ibm-plex-mono">
-              <strong className="text-red-500">Phone:</strong> +91 XXXXXXXXXX
+              <strong className="text-red-500">Phone:</strong> +91 7305401558
             </p>
             <p className="text-gray-300 font-ibm-plex-mono">
               <strong className="text-red-500">Address:</strong> Department of Artificial Intelligence and Data Science, Chennai Institute of Technology, Sarathy Nagar, Kundrathur, Chennai-600100

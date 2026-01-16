@@ -53,10 +53,10 @@ export default function RefundPolicyPage() {
           </p>
           <div className="bg-muted/20 p-4 rounded-lg border border-white/5">
             <p className="text-gray-300 font-ibm-plex-mono">
-              <strong className="text-red-500">Email:</strong> support@talos.com
+              <strong className="text-red-500">Email:</strong> taloscit72@gmail.com
             </p>
             <p className="text-gray-300 font-ibm-plex-mono mt-2">
-              <strong className="text-red-500">Subject Line:</strong> Payment Issue - [Your Name]
+              <strong className="text-red-500">Subject Line:</strong> Payment Issue - Muzammil - +91 7305401558
             </p>
           </div>
         </section>
