@@ -63,7 +63,7 @@ export default function Footer() {
                   </div>
                   <div className="text-[#FFFFFF] text-sm">
                     <span className="text-[#FFFFFF] inline-block mr-2">{'//'}</span>
-                    Sarathy Nagar,Kundrathur,Chennai-600100
+                    Sarathy nagar, Kundrathur, Chennai, Tamil Nadu, PIN: 600069
                   </div>
                 </div>
               </div>
@@ -134,9 +134,19 @@ export default function Footer() {
                     ./Legal
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF] text-sm">
-                    <li><Link href="#" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Terms_of_Service</Link></li>
+                    <li><Link href="/terms" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Terms_&_Conditions</Link></li>
                     <li><Link href="/privacy-policy" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Privacy_Policy</Link></li>
                     <li><Link href="/refund-policy" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Refund_Policy</Link></li>
+                  </ul>
+                </div>
+
+                {/* Contact Us */}
+                <div className="space-y-4">
+                   <h3 className="text-red-500 font-bold border-b border-red-900/30 pb-2 inline-block">
+                    ./Contact_Us
+                  </h3>
+                  <ul className="space-y-2 text-[#FFFFFF] text-sm">
+                    <li><Link href="/contact" className="hover:text-red-600 transition-colors decoration-dashed underline underline-offset-4 decoration-red-900/40">Contact_Information</Link></li>
                   </ul>
                 </div>
               </div>

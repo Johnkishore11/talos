@@ -27,7 +27,7 @@ const HudBackground = memo(function HudBackground({ opacity = 1, showMap = true 
         <div 
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 h-3/5 opacity-70"
           style={{
-            backgroundImage: 'url("/map-image.png")',
+            backgroundImage: 'url("/images/map-image.png")',
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',

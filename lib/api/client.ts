@@ -12,7 +12,7 @@ import type {
   UserUpdate,
 } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
 
 class ApiClient {
   private async getAuthToken(): Promise<string | null> {
@@ -53,7 +53,6 @@ class ApiClient {
       return response.json();
     } catch (error) {
       if (error instanceof TypeError && error.message === "Failed to fetch") {
-         console.error(`Network error connecting to ${url}`, error);
          throw new Error("Unable to connect to the server. Please check your internet connection or try again later.");
       }
       throw error;
@@ -64,7 +63,12 @@ class ApiClient {
 
   async getEvents(status?: string): Promise<Event[]> {
     const params = status ? `?status=${status}` : "";
-    return this.request<Event[]>(`/api/events${params}`);
+    try {
+      return await this.request<Event[]>(`/api/events${params}`);
+    } catch (error) {
+      console.warn("Failed to fetch events, using empty list", error);
+      return [];
+    }
   }
 
   async getEvent(eventId: string): Promise<Event> {
@@ -92,7 +96,12 @@ class ApiClient {
 
   async getWorkshops(status?: string): Promise<Workshop[]> {
     const params = status ? `?status=${status}` : "";
-    return this.request<Workshop[]>(`/api/workshops${params}`);
+    try {
+      return await this.request<Workshop[]>(`/api/workshops${params}`);
+    } catch (error) {
+       console.warn("Failed to fetch workshops, using empty list", error);
+       return [];
+    }
   }
 
   async getWorkshop(workshopId: string): Promise<Workshop> {

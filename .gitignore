@@ -49,3 +49,4 @@ app/seed/
 
 .firestore.rules/
 .env*.local
+.env
