@@ -33,7 +33,7 @@ export function FlipCard({
   return (
     <div
       className={cn(
-        "group h-80 w-full [perspective:1000px]",
+        "group h-96 w-full [perspective:1000px]",
         className
       )}
       onClick={handleInteraction}
