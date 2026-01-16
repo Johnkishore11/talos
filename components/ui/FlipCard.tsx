@@ -33,7 +33,7 @@ export function FlipCard({
   return (
     <div
       className={cn(
-        "group h-80 w-full [perspective:1000px]",
+        "group h-96 w-full [perspective:1000px]",
         className
       )}
       onClick={handleInteraction}
@@ -52,7 +52,7 @@ export function FlipCard({
         </div>
 
         {/* Back */}
-        <div className="absolute inset-0 h-full w-full [transform:rotateY(180deg)] [backface-visibility:hidden] rounded-2xl overflow-hidden bg-black/90 border border-white/10 p-6">
+        <div className="absolute inset-0 h-full w-full [transform:rotateY(180deg)] [backface-visibility:hidden] rounded-2xl overflow-auto bg-black/90 border border-white/10 p-6">
           {backContent}
         </div>
       </div>
