@@ -37,26 +37,15 @@ export default function GalleryPage() {
       <div className="w-full max-w-7xl mx-auto mb-12 px-4 grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         
         {/* Left Half: Video Section */}
-        <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.2)] group min-h-[400px]">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 pointer-events-none" />
-          
-          <video 
-            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
-            controls
-            autoPlay
-            muted
-            loop
-            playsInline
-            poster="/images/head.JPG"
-          >
-             <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4" />
-             Your browser does not support the video tag.
-          </video>
-
-          <div className="absolute bottom-6 left-6 z-20">
-             <h3 className="text-2xl font-bold text-white mb-1"><span className="text-red-600">TALOS 2025</span> Highlights</h3>
-             <p className="text-sm text-red-500 font-mono">REWIND THE LEGACY</p>
-          </div>
+        <div className="relative bg-black border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.2)] group min-h-[400px] flex items-center justify-center">
+          <iframe
+            src="https://www.instagram.com/reel/DGA8JS_PrnZ/embed"
+            className="w-full h-full min-h-[500px]"
+            frameBorder="0"
+            scrolling="no"
+            allowTransparency
+            allow="encrypted-media"
+          />
         </div>
 
         {/* Right Half: 4 Static Pictures (2x2 Grid) */}
