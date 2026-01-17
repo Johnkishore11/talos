@@ -16,7 +16,7 @@ export default function HighlightsSection() {
           <div className='lg:w-[25%] text-center lg:text-left'>
             <h2 className='text-4xl font-[family-name:var(--font-zen-dots)] mb-4 text-red-600'>Last Year&apos;s <span className='text-primary'>Legacy</span></h2>
             <p className='text-muted-foreground font-[family-name:var(--font-zen-dots)]'>
-              TALOS 2024 set new benchmarks. This year, we go beyond limits.
+              TALOS 2025 set new benchmarks. This year, we go beyond limits.
             </p>
           </div>
 
