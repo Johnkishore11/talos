@@ -129,6 +129,17 @@ export default function WorkshopDetailPage() {
               </p>
             </div>
 
+            {workshop.rules && (
+              <div className="bg-muted/20 p-6 rounded-xl border border-white/5">
+                <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
+                  Rules
+                </h3>
+                <p className="text-gray-400 font-ibm-plex-mono font-bold text-base whitespace-pre-line">
+                  {workshop.rules}
+                </p>
+              </div>
+            )}
+
             <div className="bg-muted/20 p-6 rounded-xl border border-white/5">
               <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
                 Instructor

@@ -67,6 +67,7 @@ export interface Workshop {
   title: string;
   description: string;
   main_description?: string;
+  rules?: string;
   instructor: string;
   date: string;
   time: string;
