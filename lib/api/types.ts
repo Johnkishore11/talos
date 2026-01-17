@@ -5,6 +5,7 @@ export interface Event {
   title: string;
   description: string;
   main_description?: string;
+  rules?: string;
   category: string;
   date: string;
   time: string;
@@ -14,7 +15,6 @@ export interface Event {
   min_team_size: number;
   max_team_size: number;
   is_team_event?: boolean;
-  rules?: string[];
   status: "open" | "closed" | "cancelled";
   created_at: string;
   organiser?: {

@@ -124,21 +124,16 @@ export default function EventDetailPage() {
               </p>
             </div>
 
-            <div className="bg-muted/20 p-6 rounded-xl border border-white/5">
-              <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
-                Rules
-              </h3>
-              <ul className="list-disc list-inside space-y-2 text-gray-400 font-ibm-plex-mono font-bold text-lg">
-                {(event.rules || [
-                  "Valid ID card is mandatory.",
-                  "Decisions of the judges are final.",
-                  "Maintain decorum during the event.",
-                  "Report at the venue 15 minutes prior."
-                ]).map((rule, index) => (
-                  <li key={index}>{rule}</li>
-                ))}
-              </ul>
-            </div>
+            {event.rules && (
+              <div className="bg-muted/20 p-6 rounded-xl border border-white/5">
+                <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
+                  Rules
+                </h3>
+                <p className="text-gray-400 font-ibm-plex-mono font-bold text-base whitespace-pre-line">
+                  {event.rules}
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="space-y-6">
