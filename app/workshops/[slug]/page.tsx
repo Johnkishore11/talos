@@ -148,6 +148,23 @@ export default function WorkshopDetailPage() {
                 {workshop.instructor}
               </p>
             </div>
+
+            {workshop.organisers && workshop.organisers.length > 0 && (
+              <div className="bg-muted/20 p-6 rounded-xl border border-white/5">
+                <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
+                  Organisers
+                </h3>
+                <div className="space-y-3">
+                  {workshop.organisers.map((organiser, index) => (
+                    <div key={index} className="text-gray-400 font-ibm-plex-mono font-bold">
+                      <p className="text-white text-lg">{organiser.name}</p>
+                      <p className="text-sm">{organiser.phone}</p>
+                      {organiser.role && <p className="text-sm text-gray-500">{organiser.role}</p>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-6">

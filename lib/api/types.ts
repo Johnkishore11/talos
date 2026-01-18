@@ -78,6 +78,11 @@ export interface Workshop {
   registration_fee: number;
   status: "open" | "closed" | "cancelled";
   created_at: string;
+  organisers?: Array<{
+    name: string;
+    phone: string;
+    role?: string;
+  }>;
 }
 
 export interface PaymentVerificationRequest {
