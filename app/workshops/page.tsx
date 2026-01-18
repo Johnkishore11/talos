@@ -6,6 +6,14 @@ import Link from "next/link";
 import { FlipCard } from "@/components/ui/FlipCard";
 import { api, type Workshop } from "@/lib/api";
 
+const WORKSHOP_IMAGES: Record<string, string> = {
+  "byog-workshop": "/images/workshop-images/Build Your own Game.jpg",
+  "cybersecurity-ai-workshop": "/images/workshop-images/Cyber Security an AI.jpg",
+  "blockchain-workshop": "/images/workshop-images/Inside a block chain.jpg",
+  "snn-workshop": "/images/workshop-images/Spiking Neural Network.jpg",
+  "mcp-ai-workshop": "/images/workshop-images/MCP and AI.png",
+};
+
 export default function WorkshopsPage() {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,7 +106,7 @@ export default function WorkshopsPage() {
             >
               <div className="relative h-full w-full">
                 <img
-                  src={workshop.image_url}
+                  src={WORKSHOP_IMAGES[workshop.workshop_id] || workshop.image_url}
                   alt={workshop.title}
                   className="size-full rounded-2xl object-cover shadow-2xl shadow-black/40"
                 />

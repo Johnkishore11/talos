@@ -110,7 +110,7 @@ export default function Footer() {
                     ./System_Info
                   </h3>
                   <div className="text-[#FFFFFF] space-y-2 text-sm">
-                    <p><span className="text-red-500">SYMPOSIUM:</span> TALOS 2026</p>
+                    <p><span className="text-red-500">SYMPOSIUM:</span> TALOS 5.0</p>
                     <p><span className="text-red-500">DEPT:</span> Artificial Intelligence and Data Science</p>
                     <p><span className="text-red-500">COLLEGE:</span> Chennai Institute of Technology</p>
                     <p><span className="text-red-500">STATUS:</span> <span className="text-[#00ff04] animate-pulse">● Online</span></p>
@@ -123,9 +123,16 @@ export default function Footer() {
                     ./Event_Coordinators
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF] text-sm">
-                    <li><span className="text-red-600">Member 1:</span> <a href="tel:ph_no1" className="hover:text-red-600 transition-colors">ph no1</a></li>
-                    <li><span className="text-red-600">Member 2:</span> <a href="tel:ph_no2" className="hover:text-red-600 transition-colors">ph no2</a></li>
+                    <li><span className="text-red-600">Muzammil</span> <a href="tel:73054 01558" className="hover:text-red-600 transition-colors">73054 01558</a></li>
+                    <li><span className="text-red-600">Madhan</span> <a href="tel:63820 29023" className="hover:text-red-600 transition-colors">63820 29023</a></li>
                   </ul>
+                  <h4 className="text-red-400 font-semibold text-xs mt-4">Staff Coordinator</h4>
+                  <div className="text-[#FFFFFF] text-xs space-y-1">
+                    <p className="text-red-600 text-sm font-bold">Pratham Verma</p>
+                    <p><a href="tel:9760162803" className="hover:text-red-600 transition-colors">97601 62803</a></p>
+                    <p>Assistant Professor</p>
+                    <p>Dept of AI&DS, CIT Chennai</p>
+                  </div>
                 </div>
 
                 {/* Legal */}
