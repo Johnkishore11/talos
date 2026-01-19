@@ -11,7 +11,7 @@ export interface Event {
   time: string;
   venue?: string;
   image_url: string;
-  max_participants?: number;
+  max_participants: number;
   min_team_size: number;
   max_team_size: number;
   is_team_event?: boolean;
@@ -74,7 +74,7 @@ export interface Workshop {
   duration: string;
   venue?: string;
   image_url: string;
-  max_participants?: number;
+  max_participants: number;
   registration_fee: number;
   status: "open" | "closed" | "cancelled";
   created_at: string;

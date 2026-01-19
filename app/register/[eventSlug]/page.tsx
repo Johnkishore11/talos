@@ -29,9 +29,7 @@ export default function EventRegistrationPage() {
   });
 
   // Team Members (1-3 members)
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { name: '', email: '', phone: '' },
-  ]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -46,6 +44,22 @@ export default function EventRegistrationPage() {
       try {
         const event = await api.getEvent(eventSlug);
         setEventData(event);
+
+        // Initialize team members based on min_team_size
+        // min_team_size includes leader, so we need min_team_size - 1 additional members
+        const minAdditionalMembers = Math.max(0, (event.min_team_size || 2) - 1);
+        const initialMembers = Array(minAdditionalMembers).fill(null).map(() => ({
+          name: '',
+          email: '',
+          phone: ''
+        }));
+
+        // If initialMembers is empty (e.g. min_team_size is 1), we might still want to show at least one if max > 1?
+        // But the requirement says "match min_team_size". 
+        // If min_team_size is 1 (solo), then 0 additional members.
+        // If min_team_size is 2, then 1 additional member.
+        setTeamMembers(initialMembers);
+
       } catch (error) {
         console.error('Error fetching event:', error);
         alert('Failed to load event details');
@@ -72,7 +86,7 @@ export default function EventRegistrationPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
+
     // Clear team name error when user types
     if (name === 'teamName') {
       setTeamNameError(null);
@@ -86,20 +100,30 @@ export default function EventRegistrationPage() {
   };
 
   const addTeamMember = () => {
-    if (teamMembers.length < 3) {
+    if (!eventData) return;
+
+    // max_team_size includes leader
+    const maxAdditionalMembers = (eventData.max_team_size || 4) - 1;
+
+    if (teamMembers.length < maxAdditionalMembers) {
       setTeamMembers([...teamMembers, { name: '', email: '', phone: '' }]);
     }
   };
 
   const removeTeamMember = (index: number) => {
-    if (teamMembers.length > 1) {
+    if (!eventData) return;
+
+    // min_team_size includes leader
+    const minAdditionalMembers = Math.max(0, (eventData.min_team_size || 2) - 1);
+
+    if (teamMembers.length > minAdditionalMembers) {
       setTeamMembers(teamMembers.filter((_, i) => i !== index));
     }
   };
 
   const checkTeamNameAvailability = async () => {
     if (!formData.teamName.trim()) return;
-    
+
     try {
       const result = await api.checkTeamName(eventSlug, formData.teamName.trim());
       if (!result.available) {
@@ -124,8 +148,8 @@ export default function EventRegistrationPage() {
     }
 
     // Validation
-    if (!formData.teamName || !formData.leaderName || !formData.leaderYear || 
-        !formData.leaderEmail || !formData.leaderPhone || !formData.collegeName) {
+    if (!formData.teamName || !formData.leaderName || !formData.leaderYear ||
+      !formData.leaderEmail || !formData.leaderPhone || !formData.collegeName) {
       alert('Please fill all required fields');
       return;
     }
@@ -136,10 +160,13 @@ export default function EventRegistrationPage() {
       return;
     }
 
-    // Validate team members (minimum 1)
+    // Validate team members (minimum required)
+    // min_team_size includes leader
+    const minAdditionalMembers = Math.max(0, (eventData?.min_team_size || 2) - 1);
     const filledMembers = teamMembers.filter((m) => m.name && m.email && m.phone);
-    if (filledMembers.length < 1) {
-      alert('At least 1 team member is required');
+
+    if (filledMembers.length < minAdditionalMembers) {
+      alert(`At least ${minAdditionalMembers} additional team member${minAdditionalMembers !== 1 ? 's' : ''} ${minAdditionalMembers === 1 ? 'is' : 'are'} required`);
       return;
     }
 
@@ -176,7 +203,7 @@ export default function EventRegistrationPage() {
       };
 
       await api.registerForEvent(eventSlug, registrationData);
-      
+
       alert('Registration successful! Your team has been registered for this event.');
       router.push('/profile');
     } catch (error) {
@@ -203,8 +230,10 @@ export default function EventRegistrationPage() {
     return null;
   }
 
-  const minMembers = eventData.min_team_size - 1; // -1 because leader is counted
-  const maxMembers = eventData.max_team_size - 1;
+  const minMembers = eventData.min_team_size;
+  const maxMembers = eventData.max_team_size;
+  const minAdditionalMembers = Math.max(0, minMembers - 1);
+  const maxAdditionalMembers = Math.max(0, maxMembers - 1);
 
   return (
     <PageSection title={`Register - ${eventData.title}`} className="min-h-screen font-sans">
@@ -244,11 +273,10 @@ export default function EventRegistrationPage() {
               onChange={handleInputChange}
               onBlur={checkTeamNameAvailability}
               required
-              className={`w-full bg-black/50 border rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all ${
-                teamNameError 
-                  ? 'border-red-600 focus:border-red-600 focus:ring-red-600/50' 
-                  : 'border-red-900/30 focus:border-red-600 focus:ring-red-600/50'
-              }`}
+              className={`w-full bg-black/50 border rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all ${teamNameError
+                ? 'border-red-600 focus:border-red-600 focus:ring-red-600/50'
+                : 'border-red-900/30 focus:border-red-600 focus:ring-red-600/50'
+                }`}
               placeholder="Enter a unique team name"
             />
             {teamNameError && (
@@ -359,17 +387,8 @@ export default function EventRegistrationPage() {
           <div className="animate-in fade-in slide-in-from-top-4 duration-300">
             <div className="flex items-center justify-between mb-6 border-b border-red-900/50 pb-4">
               <h3 className="text-2xl font-bold text-white">
-                Team Members ({minMembers}-{maxMembers} required)
+                Team Members ({minMembers}-{maxMembers} members total)
               </h3>
-              {teamMembers.length < maxMembers && (
-                <button
-                  type="button"
-                  onClick={addTeamMember}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-semibold shadow-lg shadow-red-600/30"
-                >
-                  + Add Member
-                </button>
-              )}
             </div>
 
             <div className="space-y-6">
@@ -380,7 +399,7 @@ export default function EventRegistrationPage() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <h5 className="font-semibold text-red-400">Member {index + 1}</h5>
-                    {teamMembers.length > 1 && (
+                    {teamMembers.length > minAdditionalMembers && (
                       <button
                         type="button"
                         onClick={() => removeTeamMember(index)}
@@ -450,6 +469,21 @@ export default function EventRegistrationPage() {
                 </div>
               ))}
             </div>
+
+            {teamMembers.length < maxAdditionalMembers && (
+              <div className="mt-6">
+                <button
+                  type="button"
+                  onClick={addTeamMember}
+                  className="w-full py-3 border-2 border-dashed border-red-900/30 hover:border-red-600/50 bg-red-950/10 hover:bg-red-950/20 text-red-400 hover:text-red-300 rounded-xl transition-all flex items-center justify-center gap-2 font-semibold"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Another Member
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Submit Button */}
