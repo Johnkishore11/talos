@@ -25,6 +25,7 @@ export default function WorkshopRegistrationPage() {
     year: '',
     collegeName: '',
     referralId: '',
+    transactionId: '',
   });
 
   useEffect(() => {
@@ -101,8 +102,8 @@ export default function WorkshopRegistrationPage() {
     if (!workshopData) return;
 
     // Validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.year || !formData.collegeName) {
-      alert('Please fill all required fields');
+    if (!formData.name || !formData.email || !formData.phone || !formData.year || !formData.collegeName || !formData.transactionId) {
+      alert('Please fill all required fields including transaction ID');
       return;
     }
 
@@ -128,6 +129,7 @@ export default function WorkshopRegistrationPage() {
         year: formData.year,
         college_name: formData.collegeName,
         referral_id: formData.referralId || undefined,
+        transaction_id: formData.transactionId,
       };
 
       // Create payment link
@@ -302,14 +304,39 @@ export default function WorkshopRegistrationPage() {
                 placeholder="REF123456"
               />
             </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-red-400">
+                Transaction ID <span className="text-red-600">*</span>
+              </label>
+              <input
+                type="text"
+                name="transactionId"
+                value={formData.transactionId}
+                onChange={handleInputChange}
+                required
+                className="w-full bg-black/50 border border-red-900/30 rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/50 transition-all"
+                placeholder="Enter transaction ID after payment"
+              />
+            </div>
           </div>
 
-          {/* Submit Button */}
-          <div className="mt-8 pt-6 border-t border-red-900/50">
+          {/* Submit Buttons */}
+          <div className="mt-8 pt-6 border-t border-red-900/50 space-y-4">
+            {/* Pay Button */}
+            <button
+              type="button"
+              onClick={() => window.open('https://forms.gle/YOUR_GOOGLE_FORM_ID', '_blank')}
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-green-600/50 hover:shadow-green-600/70"
+            >
+              Pay ₹{workshopData.registration_fee}
+            </button>
+            
+            {/* Register Button */}
             <button
               type="submit"
               onClick={handleSubmit}
-              disabled={submitting || !!emailError}
+              disabled={submitting || !!emailError || !formData.transactionId}
               className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? (
@@ -318,7 +345,7 @@ export default function WorkshopRegistrationPage() {
                   Processing...
                 </span>
               ) : (
-                `Pay ₹${workshopData.registration_fee} & Register`
+                'Complete Registration'
               )}
             </button>
           </div>

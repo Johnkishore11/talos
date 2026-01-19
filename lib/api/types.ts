@@ -106,6 +106,7 @@ export interface WorkshopRegistrationRequest {
   year: string;
   college_name: string;
   referral_id?: string;
+  transaction_id?: string;
 }
 
 // Workshop Registration stored in Firestore
@@ -119,6 +120,7 @@ export interface WorkshopRegistration {
   year: string;
   college_name: string;
   referral_id?: string;
+  transaction_id?: string;
   payment_id: string;
   order_id: string;
   amount: number;
