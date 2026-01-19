@@ -1,3 +1,4 @@
+
 import { auth } from "@/lib/firebase";
 import type {
   Event,
@@ -53,7 +54,7 @@ class ApiClient {
       return response.json();
     } catch (error) {
       if (error instanceof TypeError && error.message === "Failed to fetch") {
-         throw new Error("Unable to connect to the server. Please check your internet connection or try again later.");
+        throw new Error("Unable to connect to the server. Please check your internet connection or try again later.");
       }
       throw error;
     }
@@ -99,8 +100,8 @@ class ApiClient {
     try {
       return await this.request<Workshop[]>(`/api/workshops${params}`);
     } catch (error) {
-       console.warn("Failed to fetch workshops, using empty list", error);
-       return [];
+      console.warn("Failed to fetch workshops, using empty list", error);
+      return [];
     }
   }
 
@@ -121,11 +122,22 @@ class ApiClient {
     );
   }
 
+
   async checkWorkshopEmail(
     workshopId: string,
     email: string
   ): Promise<{ registered: boolean }> {
     return this.request(`/api/workshops/${workshopId}/check-email?email=${encodeURIComponent(email)}`);
+  }
+
+  async registerWorkshop(
+    workshopId: string,
+    registration: WorkshopRegistrationRequest
+  ): Promise<{ message: string; registration_id: string }> {
+    return this.request(`/api/workshops/${workshopId}/register`, {
+      method: "POST",
+      body: JSON.stringify(registration),
+    });
   }
 
   // ============== User ==============
@@ -155,3 +167,4 @@ export const api = new ApiClient();
 
 // Export types for convenience
 export * from "./types";
+

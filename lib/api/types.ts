@@ -17,7 +17,6 @@ export interface Event {
   is_team_event?: boolean;
   status: "open" | "closed" | "cancelled";
   created_at: string;
-  registration_fee?: number;
   organiser?: {
     name: string;
     contact: string[];
@@ -40,7 +39,6 @@ export interface EventRegistrationRequest {
   leader_year: string;
   college_name: string;
   referral_id?: string;
-  transaction_id?: string;
   members: TeamMember[];
 }
 
@@ -56,7 +54,6 @@ export interface EventRegistration {
   leader_year: string;
   college_name: string;
   referral_id?: string;
-  transaction_id?: string;
   members: TeamMember[];
   status: string;
   registered_at: string;
@@ -109,7 +106,7 @@ export interface WorkshopRegistrationRequest {
   year: string;
   college_name: string;
   referral_id?: string;
-  transaction_id?: string;
+  transaction_id?: string; // For manual payment flow
 }
 
 // Workshop Registration stored in Firestore
@@ -123,7 +120,6 @@ export interface WorkshopRegistration {
   year: string;
   college_name: string;
   referral_id?: string;
-  transaction_id?: string;
   payment_id: string;
   order_id: string;
   amount: number;

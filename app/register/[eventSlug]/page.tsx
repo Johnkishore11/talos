@@ -26,7 +26,6 @@ export default function EventRegistrationPage() {
     leaderYear: '',
     collegeName: '',
     referralId: '',
-    transactionId: '',
   });
 
   // Team Members (1-3 members)
@@ -148,19 +147,10 @@ export default function EventRegistrationPage() {
       return;
     }
 
-    // Check if event has registration fee and transaction ID is required
-    const hasFee = eventData?.registration_fee && eventData.registration_fee > 0;
-    
     // Validation
     if (!formData.teamName || !formData.leaderName || !formData.leaderYear ||
       !formData.leaderEmail || !formData.leaderPhone || !formData.collegeName) {
       alert('Please fill all required fields');
-      return;
-    }
-
-    // Check transaction ID for paid events
-    if (hasFee && !formData.transactionId) {
-      alert('Please fill all required fields including transaction ID');
       return;
     }
 
@@ -197,6 +187,20 @@ export default function EventRegistrationPage() {
     try {
       setSubmitting(true);
 
+      // Include leader in members list (backend requires at least 1 member)
+      const allMembers = [
+        {
+          name: formData.leaderName,
+          email: formData.leaderEmail,
+          phone: formData.leaderPhone.replace(/\D/g, ''),
+        },
+        ...filledMembers.map(m => ({
+          name: m.name,
+          email: m.email,
+          phone: m.phone.replace(/\D/g, ''),
+        }))
+      ];
+
       const registrationData: EventRegistrationRequest = {
         team_name: formData.teamName.trim(),
         leader_name: formData.leaderName,
@@ -205,12 +209,7 @@ export default function EventRegistrationPage() {
         leader_year: formData.leaderYear,
         college_name: formData.collegeName,
         referral_id: formData.referralId || undefined,
-        transaction_id: hasFee ? formData.transactionId : undefined,
-        members: filledMembers.map(m => ({
-          name: m.name,
-          email: m.email,
-          phone: m.phone.replace(/\D/g, ''),
-        })),
+        members: allMembers,
       };
 
       await api.registerForEvent(eventSlug, registrationData);
@@ -243,12 +242,9 @@ export default function EventRegistrationPage() {
 
   const minMembers = eventData.min_team_size;
   const maxMembers = eventData.max_team_size;
+  const isIndividual = minMembers === 1 && maxMembers === 1;
   const minAdditionalMembers = Math.max(0, minMembers - 1);
   const maxAdditionalMembers = Math.max(0, maxMembers - 1);
-  
-  // Check for paid events
-  const hasFee = eventData.event_id === 'freefire' || eventData.event_id === 'iplauction';
-  const eventFee = eventData.event_id === 'freefire' ? 50 : eventData.event_id === 'iplauction' ? 150 : 0;
 
   return (
     <PageSection title={`Register - ${eventData.title}`} className="min-h-screen font-sans">
@@ -259,20 +255,16 @@ export default function EventRegistrationPage() {
           <p className="text-gray-300 mb-6 text-lg">{eventData.description}</p>
 
           <div className="flex flex-wrap gap-4 items-center">
-            {hasFee ? (
-              <div className="px-4 py-2 bg-red-600/20 border border-red-600/50 rounded-lg">
-                <span className="text-red-400 font-semibold text-lg">
-                  Registration Fee: ₹{eventFee}
-                </span>
-              </div>
-            ) : (
-              <div className="px-4 py-2 bg-green-600/20 border border-green-600/50 rounded-lg">
-                <span className="text-green-400 font-semibold text-lg">Free Registration</span>
-              </div>
-            )}
+            <div className="px-4 py-2 bg-green-600/20 border border-green-600/50 rounded-lg">
+              <span className="text-green-400 font-semibold text-lg">Free Registration</span>
+            </div>
             <div className="px-4 py-2 bg-blue-600/20 border border-blue-600/50 rounded-lg">
               <span className="text-blue-400 font-semibold">
-                Team Size: {eventData.min_team_size} - {eventData.max_team_size} members (including leader)
+                {isIndividual ? (
+                  "Individual Participation"
+                ) : (
+                  `Team Size: ${eventData.min_team_size} - ${eventData.max_team_size} members (including leader)`
+                )}
               </span>
             </div>
           </div>
@@ -309,7 +301,7 @@ export default function EventRegistrationPage() {
 
           {/* Team Leader Section */}
           <h3 className="text-2xl font-bold text-white mb-6 border-b border-red-900/50 pb-4">
-            Team Leader Information
+            {isIndividual ? "Participant Information" : "Team Leader Information"}
           </h3>
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -406,172 +398,127 @@ export default function EventRegistrationPage() {
             />
           </div>
 
-          {/* Transaction ID field for paid events */}
-          {hasFee && (
-            <div className="mb-8">
-              <label className="block text-sm font-semibold mb-2 text-red-400">
-                Transaction ID <span className="text-red-600">*</span>
-              </label>
-              <input
-                type="text"
-                name="transactionId"
-                value={formData.transactionId}
-                onChange={handleInputChange}
-                required
-                className="w-full bg-black/50 border border-red-900/30 rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/50 transition-all"
-                placeholder="Enter transaction ID after payment"
-              />
+          {/* Team Members Section */}
+          {!isIndividual && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="flex items-center justify-between mb-6 border-b border-red-900/50 pb-4">
+                <h3 className="text-2xl font-bold text-white">
+                  Team Members ({minMembers}-{maxMembers} members total)
+                </h3>
+              </div>
+
+              <div className="space-y-6">
+                {teamMembers.map((member, index) => (
+                  <div
+                    key={index}
+                    className="bg-red-950/20 border border-red-900/30 rounded-xl p-6 relative"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h5 className="font-semibold text-red-400">Member {index + 1}</h5>
+                      {teamMembers.length > minAdditionalMembers && (
+                        <button
+                          type="button"
+                          onClick={() => removeTeamMember(index)}
+                          className="text-red-500 hover:text-red-400 transition-colors"
+                        >
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold mb-2 text-gray-400">
+                          Name <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={member.name}
+                          onChange={(e) => handleTeamMemberChange(index, 'name', e.target.value)}
+                          required
+                          className="w-full bg-black/50 border border-red-900/30 rounded-lg p-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all text-sm"
+                          placeholder="Member name"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold mb-2 text-gray-400">
+                          Email <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={member.email}
+                          onChange={(e) => handleTeamMemberChange(index, 'email', e.target.value)}
+                          required
+                          className="w-full bg-black/50 border border-red-900/30 rounded-lg p-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all text-sm"
+                          placeholder="member@example.com"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold mb-2 text-gray-400">
+                          Phone <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          value={member.phone}
+                          onChange={(e) => handleTeamMemberChange(index, 'phone', e.target.value)}
+                          required
+                          pattern="[0-9]{10}"
+                          className="w-full bg-black/50 border border-red-900/30 rounded-lg p-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all text-sm"
+                          placeholder="9876543210"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {teamMembers.length < maxAdditionalMembers && (
+                <div className="mt-6">
+                  <button
+                    type="button"
+                    onClick={addTeamMember}
+                    className="w-full py-3 border-2 border-dashed border-red-900/30 hover:border-red-600/50 bg-red-950/10 hover:bg-red-950/20 text-red-400 hover:text-red-300 rounded-xl transition-all flex items-center justify-center gap-2 font-semibold"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Another Member
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Team Members Section */}
-          <div className="animate-in fade-in slide-in-from-top-4 duration-300">
-            <div className="flex items-center justify-between mb-6 border-b border-red-900/50 pb-4">
-              <h3 className="text-2xl font-bold text-white">
-                Team Members ({minMembers}-{maxMembers} members total)
-              </h3>
-            </div>
-
-            <div className="space-y-6">
-              {teamMembers.map((member, index) => (
-                <div
-                  key={index}
-                  className="bg-red-950/20 border border-red-900/30 rounded-xl p-6 relative"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <h5 className="font-semibold text-red-400">Member {index + 1}</h5>
-                    {teamMembers.length > minAdditionalMembers && (
-                      <button
-                        type="button"
-                        onClick={() => removeTeamMember(index)}
-                        className="text-red-500 hover:text-red-400 transition-colors"
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold mb-2 text-gray-400">
-                        Name <span className="text-red-600">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={member.name}
-                        onChange={(e) => handleTeamMemberChange(index, 'name', e.target.value)}
-                        required
-                        className="w-full bg-black/50 border border-red-900/30 rounded-lg p-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all text-sm"
-                        placeholder="Member name"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold mb-2 text-gray-400">
-                        Email <span className="text-red-600">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        value={member.email}
-                        onChange={(e) => handleTeamMemberChange(index, 'email', e.target.value)}
-                        required
-                        className="w-full bg-black/50 border border-red-900/30 rounded-lg p-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all text-sm"
-                        placeholder="member@example.com"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold mb-2 text-gray-400">
-                        Phone <span className="text-red-600">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        value={member.phone}
-                        onChange={(e) => handleTeamMemberChange(index, 'phone', e.target.value)}
-                        required
-                        pattern="[0-9]{10}"
-                        className="w-full bg-black/50 border border-red-900/30 rounded-lg p-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all text-sm"
-                        placeholder="9876543210"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {teamMembers.length < maxAdditionalMembers && (
-              <div className="mt-6">
-                <button
-                  type="button"
-                  onClick={addTeamMember}
-                  className="w-full py-3 border-2 border-dashed border-red-900/30 hover:border-red-600/50 bg-red-950/10 hover:bg-red-950/20 text-red-400 hover:text-red-300 rounded-xl transition-all flex items-center justify-center gap-2 font-semibold"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Add Another Member
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Submit Buttons */}
+          {/* Submit Button */}
           <div className="mt-8 pt-6 border-t border-red-900/50">
-            {hasFee ? (
-              <div className="space-y-4">
-                {/* Pay Button */}
-                <button
-                  type="button"
-                  onClick={() => window.open('https://forms.gle/YOUR_GOOGLE_FORM_ID', '_blank')}
-                  className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-green-600/50 hover:shadow-green-600/70"
-                >
-                  Pay ₹{eventFee}
-                </button>
-                
-                {/* Register Button */}
-                <button
-                  type="submit"
-                  disabled={submitting || !!teamNameError || !formData.transactionId}
-                  className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                      Registering...
-                    </span>
-                  ) : (
-                    'Complete Registration'
-                  )}
-                </button>
-              </div>
-            ) : (
-              <button
-                type="submit"
-                disabled={submitting || !!teamNameError}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {submitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                    Registering...
-                  </span>
-                ) : (
-                  'Complete Registration'
-                )}
-              </button>
-            )}
+            <button
+              type="submit"
+              disabled={submitting || !!teamNameError}
+              className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {submitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                  Registering...
+                </span>
+              ) : (
+                'Complete Registration'
+              )}
+            </button>
           </div>
         </form>
       </div>

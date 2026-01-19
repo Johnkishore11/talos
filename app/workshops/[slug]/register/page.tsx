@@ -15,7 +15,12 @@ export default function WorkshopRegistrationPage() {
   const [workshopData, setWorkshopData] = useState<Workshop | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [transactionId, setTransactionId] = useState('');
+
+  // Placeholder for the Google Form link
+  const PAYMENT_FORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSe..."; // TODO: Replace with actual link
 
   // Form state - Solo registration
   const [formData, setFormData] = useState({
@@ -25,7 +30,6 @@ export default function WorkshopRegistrationPage() {
     year: '',
     collegeName: '',
     referralId: '',
-    transactionId: '',
   });
 
   useEffect(() => {
@@ -53,7 +57,7 @@ export default function WorkshopRegistrationPage() {
     fetchWorkshop();
   }, [workshopSlug, router]);
 
-// Pre-fill user data
+  // Pre-fill user data
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
@@ -67,7 +71,7 @@ export default function WorkshopRegistrationPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
+
     if (name === 'email') {
       setEmailError(null);
     }
@@ -75,7 +79,7 @@ export default function WorkshopRegistrationPage() {
 
   const checkEmailRegistered = async () => {
     if (!formData.email.trim()) return;
-    
+
     try {
       const result = await api.checkWorkshopEmail(workshopSlug, formData.email.trim());
       if (result.registered) {
@@ -102,8 +106,13 @@ export default function WorkshopRegistrationPage() {
     if (!workshopData) return;
 
     // Validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.year || !formData.collegeName || !formData.transactionId) {
-      alert('Please fill all required fields including transaction ID');
+    if (!formData.name || !formData.email || !formData.phone || !formData.year || !formData.collegeName) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    if (!transactionId.trim()) {
+      alert('Please enter the Transaction ID after completing the payment');
       return;
     }
 
@@ -129,21 +138,25 @@ export default function WorkshopRegistrationPage() {
         year: formData.year,
         college_name: formData.collegeName,
         referral_id: formData.referralId || undefined,
-        transaction_id: formData.transactionId,
+        transaction_id: transactionId.trim(),
       };
 
-      // Create payment link
-      const paymentLink = await api.createWorkshopPaymentLink(workshopSlug, registrationData);
-      
-      // Redirect to payment link
-      window.location.href = paymentLink.short_url;
-      
+      // Register directly
+      await api.registerWorkshop(workshopSlug, registrationData);
+
+      alert('Registration successful! Your registration is pending verification.');
+      router.push('/profile');
+
     } catch (error) {
-      console.error('Error creating payment link:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create payment link. Please try again.';
+      console.error('Error registering:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to register. Please try again.';
       alert(errorMessage);
       setSubmitting(false);
     }
+  };
+
+  const handlePayClick = () => {
+    window.open(PAYMENT_FORM_LINK, '_blank');
   };
 
   if (loading || authLoading) {
@@ -248,11 +261,10 @@ export default function WorkshopRegistrationPage() {
                 onChange={handleInputChange}
                 onBlur={checkEmailRegistered}
                 required
-                className={`w-full bg-black/50 border rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all ${
-                  emailError 
-                    ? 'border-red-600 focus:border-red-600 focus:ring-red-600/50' 
-                    : 'border-red-900/30 focus:border-red-600 focus:ring-red-600/50'
-                }`}
+                className={`w-full bg-black/50 border rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all ${emailError
+                  ? 'border-red-600 focus:border-red-600 focus:ring-red-600/50'
+                  : 'border-red-900/30 focus:border-red-600 focus:ring-red-600/50'
+                  }`}
                 placeholder="john@example.com"
               />
               {emailError && (
@@ -304,50 +316,57 @@ export default function WorkshopRegistrationPage() {
                 placeholder="REF123456"
               />
             </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-red-400">
-                Transaction ID <span className="text-red-600">*</span>
-              </label>
-              <input
-                type="text"
-                name="transactionId"
-                value={formData.transactionId}
-                onChange={handleInputChange}
-                required
-                className="w-full bg-black/50 border border-red-900/30 rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/50 transition-all"
-                placeholder="Enter transaction ID after payment"
-              />
-            </div>
           </div>
 
-          {/* Submit Buttons */}
+          {/* Payment and Submit Section */}
           <div className="mt-8 pt-6 border-t border-red-900/50 space-y-4">
-            {/* Pay Button */}
-            <button
-              type="button"
-              onClick={() => window.open('https://forms.gle/YOUR_GOOGLE_FORM_ID', '_blank')}
-              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-green-600/50 hover:shadow-green-600/70"
-            >
-              Pay ₹{workshopData.registration_fee}
-            </button>
-            
-            {/* Register Button */}
-            <button
-              type="submit"
-              onClick={handleSubmit}
-              disabled={submitting || !!emailError || !formData.transactionId}
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {submitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                  Processing...
-                </span>
-              ) : (
-                'Complete Registration'
-              )}
-            </button>
+
+            <div className="bg-red-900/20 border border-red-900/30 rounded-xl p-4">
+              <h4 className="text-white font-semibold mb-2">Step 1: Make Payment</h4>
+              <p className="text-gray-400 text-sm mb-4">
+                Click the button below to pay the registration fee of ₹{workshopData.registration_fee}.
+                After payment, note down the Transaction ID / UTR Number.
+              </p>
+              <button
+                type="button"
+                onClick={handlePayClick}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-all"
+              >
+                Pay ₹{workshopData.registration_fee}
+              </button>
+            </div>
+
+            <div className="bg-red-900/20 border border-red-900/30 rounded-xl p-4">
+              <h4 className="text-white font-semibold mb-2">Step 2: Enter Transaction Details</h4>
+              <div className="mb-4">
+                <label className="block text-sm font-semibold mb-2 text-red-400">
+                  Transaction ID / UTR Number <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={transactionId}
+                  onChange={(e) => setTransactionId(e.target.value)}
+                  className="w-full bg-black/50 border border-red-900/30 rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/50 transition-all"
+                  placeholder="Enter Transaction ID"
+                />
+              </div>
+
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={submitting || !!emailError || !transactionId}
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    Processing...
+                  </span>
+                ) : (
+                  'Complete Registration'
+                )}
+              </button>
+            </div>
           </div>
         </form>
       </div>
