@@ -346,7 +346,7 @@ export default function EventRegistrationPage() {
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block text-sm font-semibold mb-2 text-red-400">
-                Leader Name <span className="text-red-600">*</span>
+                {(eventData?.title.toLowerCase().includes('promptorix') || eventSlug.toLowerCase().includes('promptorix')) ? 'Participant Name' : 'Leader Name'} <span className="text-red-600">*</span>
               </label>
               <input
                 type="text"
