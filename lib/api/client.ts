@@ -47,8 +47,15 @@ class ApiClient {
       });
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: "An error occurred" }));
-        throw new Error(error.detail || `HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({ detail: "An error occurred" }));
+        let errorMessage = errorData.detail || `HTTP error! status: ${response.status}`;
+        
+        // Handle case where detail is an object or array (e.g. FastAPI validation errors)
+        if (typeof errorMessage === 'object') {
+          errorMessage = JSON.stringify(errorMessage);
+        }
+        
+        throw new Error(errorMessage);
       }
 
       return response.json();

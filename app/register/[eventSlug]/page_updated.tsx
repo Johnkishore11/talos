@@ -48,7 +48,23 @@ export default function EventRegistrationPage() {
 
         // Initialize team members based on min_team_size
         // min_team_size includes leader, so we need min_team_size - 1 additional members
-        const minAdditionalMembers = Math.max(0, (event.min_team_size || 2) - 1);
+        
+        // Override for Plot Verse and Pixora to ensure they allow 1-2 participants
+        const lowerTitle = event.title.toLowerCase();
+        const lowerSlug = eventSlug.toLowerCase();
+        
+        const isFlexibleEvent = lowerTitle.includes('pixora') || 
+                               lowerTitle.includes('plot') ||
+                               lowerSlug.includes('pixora') || 
+                               lowerSlug.includes('plot');
+                               
+        if (isFlexibleEvent) {
+          event.min_team_size = 1;
+          // Ensure max is at least 2 if it's supposed to be 1-2
+          if (event.max_team_size < 2) event.max_team_size = 2;
+        }
+
+        const minAdditionalMembers = Math.max(0, (event.min_team_size || 1) - 1);
         const initialMembers = Array(minAdditionalMembers).fill(null).map(() => ({
           name: '',
           email: '',
@@ -111,7 +127,7 @@ export default function EventRegistrationPage() {
     if (!eventData) return;
 
     // min_team_size includes leader
-    const minAdditionalMembers = Math.max(0, (eventData.min_team_size || 2) - 1);
+    const minAdditionalMembers = Math.max(0, (eventData.min_team_size || 1) - 1);
 
     if (teamMembers.length > minAdditionalMembers) {
       setTeamMembers(teamMembers.filter((_, i) => i !== index));
@@ -166,13 +182,18 @@ export default function EventRegistrationPage() {
       return;
     }
 
-    // Validate team members (minimum required)
-    // min_team_size includes leader
-    const minAdditionalMembers = Math.max(0, (eventData?.min_team_size || 2) - 1);
+    // Get filled members
     const filledMembers = teamMembers.filter((m) => m.name && m.email && m.phone);
 
-    if (filledMembers.length < minAdditionalMembers) {
-      alert(`At least ${minAdditionalMembers} additional team member${minAdditionalMembers !== 1 ? 's' : ''} ${minAdditionalMembers === 1 ? 'is' : 'are'} required`);
+    // Validate team size against event limits
+    const totalTeamSize = filledMembers.length + 1; // +1 for leader
+    if (totalTeamSize > (eventData?.max_team_size || 4)) {
+      alert(`Team size cannot exceed ${eventData?.max_team_size} members (including leader)`);
+      return;
+    }
+
+    if (totalTeamSize < (eventData?.min_team_size || 1)) {
+      alert(`Team must have at least ${eventData?.min_team_size} members (including leader)`);
       return;
     }
 
@@ -193,6 +214,31 @@ export default function EventRegistrationPage() {
     try {
       setSubmitting(true);
 
+      const membersToSend = filledMembers.map(m => ({
+        name: m.name,
+        email: m.email,
+        phone: m.phone.replace(/\D/g, ''),
+      }));
+
+      // Workaround for Pixora/Plotverse: If participating solo, add leader to members list
+      // to satisfy potential backend requirement of min_team_size = 2.
+      // Since backend counts Leader + Members, adding leader to members makes count = 2.
+      const lowerTitle = eventData?.title.toLowerCase() || '';
+      const lowerSlug = eventSlug.toLowerCase();
+
+      const isFlexibleEvent = lowerTitle.includes('pixora') || 
+                              lowerTitle.includes('plot') ||
+                              lowerSlug.includes('pixora') || 
+                              lowerSlug.includes('plot');
+
+      if (isFlexibleEvent && membersToSend.length === 0) {
+         membersToSend.push({
+           name: formData.leaderName,
+           email: formData.leaderEmail,
+           phone: formData.leaderPhone.replace(/\D/g, ''),
+         });
+      }
+
       const registrationData: EventRegistrationRequest = {
         team_name: formData.teamName.trim(),
         leader_name: formData.leaderName,
@@ -202,12 +248,21 @@ export default function EventRegistrationPage() {
         college_name: formData.collegeName,
         referral_id: formData.referralId || undefined,
         transaction_id: hasFee ? formData.transactionId : undefined,
-        members: filledMembers.map(m => ({
-          name: m.name,
-          email: m.email,
-          phone: m.phone.replace(/\D/g, ''),
-        })),
+        members: membersToSend,
       };
+
+      // Debug log
+      console.log('Registration data:', {
+        eventSlug,
+        teamSize: filledMembers.length + 1, // +1 for leader
+        minSize: eventData?.min_team_size,
+        maxSize: eventData?.max_team_size,
+        membersCount: filledMembers.length,
+        totalMembers: filledMembers.length + 1,
+        registrationData,
+        teamMembersArray: teamMembers,
+        filledMembersArray: filledMembers
+      });
 
       await api.registerForEvent(eventSlug, registrationData);
 
