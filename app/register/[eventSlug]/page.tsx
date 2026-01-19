@@ -138,6 +138,12 @@ export default function EventRegistrationPage() {
     }
   };
 
+  const generateIndividualTeamName = () => {
+    const phoneDigits = formData.leaderPhone.replace(/\D/g, '');
+    const safeName = formData.leaderName.trim() || 'participant';
+    return `${safeName}-${phoneDigits || 'phone'}`.replace(/\s+/g, '-').toLowerCase();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -147,8 +153,10 @@ export default function EventRegistrationPage() {
       return;
     }
 
+    const isIndividualEvent = eventData?.min_team_size === 1 && eventData?.max_team_size === 1;
+
     // Validation
-    if (!formData.teamName || !formData.leaderName || !formData.leaderYear ||
+    if ((!formData.teamName && !isIndividualEvent) || !formData.leaderName || !formData.leaderYear ||
       !formData.leaderEmail || !formData.leaderPhone || !formData.collegeName) {
       alert('Please fill all required fields');
       return;
@@ -178,21 +186,26 @@ export default function EventRegistrationPage() {
       }
     }
 
-    // Check team name availability
-    const isTeamNameAvailable = await checkTeamNameAvailability();
-    if (!isTeamNameAvailable) {
-      return;
+    // Check team name availability for team events only
+    if (!isIndividualEvent) {
+      const isTeamNameAvailable = await checkTeamNameAvailability();
+      if (!isTeamNameAvailable) {
+        return;
+      }
     }
 
     try {
       setSubmitting(true);
+
+      const leaderPhoneDigits = formData.leaderPhone.replace(/\D/g, '');
+      const teamNameToSend = isIndividualEvent ? generateIndividualTeamName() : formData.teamName.trim();
 
       // Include leader in members list (backend requires at least 1 member)
       const allMembers = [
         {
           name: formData.leaderName,
           email: formData.leaderEmail,
-          phone: formData.leaderPhone.replace(/\D/g, ''),
+          phone: leaderPhoneDigits,
         },
         ...filledMembers.map(m => ({
           name: m.name,
@@ -202,14 +215,14 @@ export default function EventRegistrationPage() {
       ];
 
       const registrationData: EventRegistrationRequest = {
-        team_name: formData.teamName.trim(),
+        team_name: teamNameToSend,
         leader_name: formData.leaderName,
         leader_email: formData.leaderEmail,
-        leader_phone: formData.leaderPhone.replace(/\D/g, ''),
+        leader_phone: leaderPhoneDigits,
         leader_year: formData.leaderYear,
         college_name: formData.collegeName,
         referral_id: formData.referralId || undefined,
-        members: allMembers,
+        members: isIndividualEvent ? allMembers.slice(0, 1) : allMembers,
       };
 
       await api.registerForEvent(eventSlug, registrationData);
@@ -272,32 +285,35 @@ export default function EventRegistrationPage() {
 
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="bg-black/40 backdrop-blur-sm border border-red-900/30 rounded-2xl p-8 shadow-2xl">
-          {/* Team Name Section */}
-          <h3 className="text-2xl font-bold text-white mb-6 border-b border-red-900/50 pb-4">
-            Team Information
-          </h3>
+          {!isIndividual && (
+            <>
+              <h3 className="text-2xl font-bold text-white mb-6 border-b border-red-900/50 pb-4">
+                Team Information
+              </h3>
 
-          <div className="mb-8">
-            <label className="block text-sm font-semibold mb-2 text-red-400">
-              Team Name <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="text"
-              name="teamName"
-              value={formData.teamName}
-              onChange={handleInputChange}
-              onBlur={checkTeamNameAvailability}
-              required
-              className={`w-full bg-black/50 border rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all ${teamNameError
-                ? 'border-red-600 focus:border-red-600 focus:ring-red-600/50'
-                : 'border-red-900/30 focus:border-red-600 focus:ring-red-600/50'
-                }`}
-              placeholder="Enter a unique team name"
-            />
-            {teamNameError && (
-              <p className="text-red-500 text-sm mt-2">{teamNameError}</p>
-            )}
-          </div>
+              <div className="mb-8">
+                <label className="block text-sm font-semibold mb-2 text-red-400">
+                  Team Name <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="teamName"
+                  value={formData.teamName}
+                  onChange={handleInputChange}
+                  onBlur={checkTeamNameAvailability}
+                  required={!isIndividual}
+                  className={`w-full bg-black/50 border rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all ${teamNameError
+                    ? 'border-red-600 focus:border-red-600 focus:ring-red-600/50'
+                    : 'border-red-900/30 focus:border-red-600 focus:ring-red-600/50'
+                    }`}
+                  placeholder="Enter a unique team name"
+                />
+                {teamNameError && (
+                  <p className="text-red-500 text-sm mt-2">{teamNameError}</p>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Team Leader Section */}
           <h3 className="text-2xl font-bold text-white mb-6 border-b border-red-900/50 pb-4">
