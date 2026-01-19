@@ -7,6 +7,7 @@ export default function GalleryPage() {
     "/images/inaugration.JPG",
     "/images/paperpresentation.JPG",
     "/images/plotathon.JPG",
+    "/images/promptopia.jpeg",
     "/images/workshop1.JPG",
     "/images/nontech1.JPG",
     "/images/students.JPG",
@@ -14,7 +15,8 @@ export default function GalleryPage() {
     "/images/crew.JPG",
     "/images/partha1.JPG",
     "/images/partha2.JPG",
-    "/images/guest.JPG"
+    "/images/guest.JPG",
+    "/images/promptopia2.jpeg"
   ];
 
   const staticImages = [
