@@ -115,15 +115,6 @@ export default function EventDetailPage() {
               </p>
             </div>
 
-            <div className="bg-muted/20 p-6 rounded-xl border border-white/5">
-              <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
-                Team Information
-              </h3>
-              <p className="text-gray-400 font-ibm-plex-mono font-bold text-lg">
-                This is a team event. Team size: {event.min_team_size} - {event.max_team_size} members (including leader).
-              </p>
-            </div>
-
             {event.rules && (
               <div className="bg-muted/20 p-6 rounded-xl border border-white/5">
                 <h3 className="text-3xl md:text-4xl font-bold font-zen-dots text-[#dc2626] mb-4">
