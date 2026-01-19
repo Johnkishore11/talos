@@ -15,6 +15,7 @@ export interface Event {
   min_team_size: number;
   max_team_size: number;
   is_team_event?: boolean;
+  registration_fee: number;
   status: "open" | "closed" | "cancelled";
   created_at: string;
   organiser?: {
@@ -30,7 +31,7 @@ export interface TeamMember {
   phone: string;
 }
 
-// Event Registration Request - Team based, FREE
+// Event Registration Request - Team based
 export interface EventRegistrationRequest {
   team_name: string;
   leader_name: string;
@@ -39,6 +40,7 @@ export interface EventRegistrationRequest {
   leader_year: string;
   college_name: string;
   referral_id?: string;
+  transaction_id?: string;
   members: TeamMember[];
 }
 
