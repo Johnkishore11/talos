@@ -141,7 +141,7 @@ export default function EventsPage() {
           {nonTechEvents.length > 0 && (
             <div>
               <div className="mb-6">
-                <h2 className="text-3xl font-bold text-red-600 zen-dots-regular">Non Tech Events</h2>
+                <h2 className="text-3xl font-bold text-red-600 zen-dots-regular">Vibe Zone</h2>
                 <div className="mt-2 h-1 w-20 bg-gradient-to-r from-red-600 to-red-400 rounded-full" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
