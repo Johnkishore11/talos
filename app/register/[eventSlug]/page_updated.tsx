@@ -55,10 +55,6 @@ export default function EventRegistrationPage() {
           phone: ''
         }));
 
-        // If initialMembers is empty (e.g. min_team_size is 1), we might still want to show at least one if max > 1?
-        // But the requirement says "match min_team_size". 
-        // If min_team_size is 1 (solo), then 0 additional members.
-        // If min_team_size is 2, then 1 additional member.
         setTeamMembers(initialMembers);
 
       } catch (error) {
@@ -245,10 +241,7 @@ export default function EventRegistrationPage() {
   const maxMembers = eventData.max_team_size;
   const minAdditionalMembers = Math.max(0, minMembers - 1);
   const maxAdditionalMembers = Math.max(0, maxMembers - 1);
-  
-  // Check for paid events
-  const hasFee = eventData.event_id === 'freefire' || eventData.event_id === 'iplauction';
-  const eventFee = eventData.event_id === 'freefire' ? 50 : eventData.event_id === 'iplauction' ? 150 : 0;
+  const hasFee = eventData.registration_fee && eventData.registration_fee > 0;
 
   return (
     <PageSection title={`Register - ${eventData.title}`} className="min-h-screen font-sans">
@@ -262,7 +255,7 @@ export default function EventRegistrationPage() {
             {hasFee ? (
               <div className="px-4 py-2 bg-red-600/20 border border-red-600/50 rounded-lg">
                 <span className="text-red-400 font-semibold text-lg">
-                  Registration Fee: ₹{eventFee}
+                  Registration Fee: ₹{eventData.registration_fee}
                 </span>
               </div>
             ) : (
@@ -537,7 +530,7 @@ export default function EventRegistrationPage() {
                   onClick={() => window.open('https://forms.gle/YOUR_GOOGLE_FORM_ID', '_blank')}
                   className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-green-600/50 hover:shadow-green-600/70"
                 >
-                  Pay ₹{eventFee}
+                  Pay ₹{eventData.registration_fee}
                 </button>
                 
                 {/* Register Button */}

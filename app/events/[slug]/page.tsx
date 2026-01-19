@@ -149,7 +149,13 @@ export default function EventDetailPage() {
                 )}
                 <div className="flex justify-between">
                   <span className="text-gray-500">Fee</span>
-                  <span className="text-green-400">Free</span>
+                  {event.event_id === 'freefire' ? (
+                    <span className="text-red-400">₹50</span>
+                  ) : event.event_id === 'iplauction' ? (
+                    <span className="text-red-400">₹150</span>
+                  ) : (
+                    <span className="text-green-400">Free</span>
+                  )}
                 </div>
                 {event.max_participants && (
                   <div className="flex justify-between">

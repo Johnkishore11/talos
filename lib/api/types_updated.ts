@@ -17,7 +17,7 @@ export interface Event {
   is_team_event?: boolean;
   status: "open" | "closed" | "cancelled";
   created_at: string;
-  registration_fee?: number;
+  registration_fee?: number; // Add registration fee for events
   organiser?: {
     name: string;
     contact: string[];
@@ -31,7 +31,7 @@ export interface TeamMember {
   phone: string;
 }
 
-// Event Registration Request - Team based, FREE
+// Event Registration Request - Team based, with optional fee
 export interface EventRegistrationRequest {
   team_name: string;
   leader_name: string;
@@ -40,7 +40,7 @@ export interface EventRegistrationRequest {
   leader_year: string;
   college_name: string;
   referral_id?: string;
-  transaction_id?: string;
+  transaction_id?: string; // Add transaction ID for paid events
   members: TeamMember[];
 }
 
@@ -56,7 +56,7 @@ export interface EventRegistration {
   leader_year: string;
   college_name: string;
   referral_id?: string;
-  transaction_id?: string;
+  transaction_id?: string; // Add transaction ID for paid events
   members: TeamMember[];
   status: string;
   registered_at: string;
