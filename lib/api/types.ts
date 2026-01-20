@@ -107,8 +107,8 @@ export interface WorkshopRegistrationRequest {
   phone: string;
   year: string;
   college_name: string;
+  transaction_id: string; // Required transaction ID
   referral_id?: string;
-  transaction_id?: string; // For manual payment flow
 }
 
 // Workshop Registration stored in Firestore

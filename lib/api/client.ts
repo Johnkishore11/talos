@@ -147,6 +147,16 @@ class ApiClient {
     });
   }
 
+  async registerWorkshop(
+    workshopId: string,
+    registration: WorkshopRegistrationRequest
+  ): Promise<{ message: string; registration_id: string }> {
+    return this.request(`/api/workshops/${workshopId}/register`, {
+      method: "POST",
+      body: JSON.stringify(registration),
+    });
+  }
+
   // ============== User ==============
 
   async getUserProfile(): Promise<User> {
