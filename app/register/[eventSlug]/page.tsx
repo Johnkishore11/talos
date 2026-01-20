@@ -42,16 +42,16 @@ export default function EventRegistrationPage() {
       if (!eventSlug) return;
 
       try {
-        const event = await api.getEvent(eventSlug);        
+        const event = await api.getEvent(eventSlug);
         // Override for Plot Verse and Pixora to ensure they allow 1-2 participants
         const lowerTitle = event.title.toLowerCase();
         const lowerSlug = eventSlug.toLowerCase();
-        
-        const isFlexibleEvent = lowerTitle.includes('pixora') || 
-                               lowerTitle.includes('plot') ||
-                               lowerSlug.includes('pixora') || 
-                               lowerSlug.includes('plot');
-                               
+
+        const isFlexibleEvent = lowerTitle.includes('pixora') ||
+          lowerTitle.includes('plot') ||
+          lowerSlug.includes('pixora') ||
+          lowerSlug.includes('plot');
+
         if (isFlexibleEvent) {
           event.min_team_size = 1;
           if (event.max_team_size < 2) event.max_team_size = 2;
@@ -214,27 +214,27 @@ export default function EventRegistrationPage() {
       const teamNameToSend = isIndividualEvent ? generateIndividualTeamName() : formData.teamName.trim();
 
       const membersToSend = filledMembers.map(m => ({
-          name: m.name,
-          email: m.email,
-          phone: m.phone.replace(/\D/g, ''),
-        }));
+        name: m.name,
+        email: m.email,
+        phone: m.phone.replace(/\D/g, ''),
+      }));
 
       // Workaround for Pixora/Plotverse: If participating solo, add leader to members list
       // to satisfy potential backend requirement of min_team_size = 2.
       const lowerTitle = eventData?.title.toLowerCase() || '';
       const lowerSlug = eventSlug.toLowerCase();
-      
-      const isFlexibleEvent = lowerTitle.includes('pixora') || 
-                              lowerTitle.includes('plot') ||
-                              lowerSlug.includes('pixora') || 
-                              lowerSlug.includes('plot');
+
+      const isFlexibleEvent = lowerTitle.includes('pixora') ||
+        lowerTitle.includes('plot') ||
+        lowerSlug.includes('pixora') ||
+        lowerSlug.includes('plot');
 
       if (isFlexibleEvent && membersToSend.length === 0) {
-         membersToSend.push({
-           name: formData.leaderName,
-           email: formData.leaderEmail,
-           phone: leaderPhoneDigits,
-         });
+        membersToSend.push({
+          name: formData.leaderName,
+          email: formData.leaderEmail,
+          phone: leaderPhoneDigits,
+        });
       }
 
       const registrationData: EventRegistrationRequest = {

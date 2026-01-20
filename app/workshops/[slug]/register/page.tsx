@@ -19,8 +19,8 @@ export default function WorkshopRegistrationPage() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState('');
 
-  // Placeholder for the Google Form link
-  const PAYMENT_FORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSe..."; // TODO: Replace with actual link
+
+  const PAYMENT_FORM_LINK = process.env.NEXT_PUBLIC_FORM_IPL_AUCTION; // TODO: Replace with actual link
 
   // Form state - Solo registration
   const [formData, setFormData] = useState({
