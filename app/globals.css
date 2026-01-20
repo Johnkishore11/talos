@@ -101,10 +101,44 @@ body {
   cursor: none;
 }
 
+/* Adaptive cursor fallback for low-end devices */
+body.use-default-cursor {
+  cursor: auto !important;
+}
+
+body.use-default-cursor * {
+  cursor: auto !important;
+}
+
 a,
 button,
 [role="button"] {
   cursor: none;
+}
+
+/* Enhanced cursor visibility for all browsers */
+body.use-default-cursor a,
+body.use-default-cursor button,
+body.use-default-cursor [role="button"] {
+  cursor: pointer !important;
+}
+
+body.use-default-cursor input,
+body.use-default-cursor textarea {
+  cursor: text !important;
+}
+
+/* Ensure cursor is visible in all browsers */
+@supports (-webkit-appearance: none) {
+  body.use-default-cursor {
+    -webkit-cursor-visibility: visible;
+  }
+}
+
+@supports (-moz-appearance: none) {
+  body.use-default-cursor {
+    -moz-cursor-visibility: visible;
+  }
 }
 
 /* =========================
