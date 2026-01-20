@@ -306,7 +306,7 @@ export default function EventRegistrationPage() {
     <PageSection title={`Register - ${eventData.title}`} className="min-h-screen font-sans">
       <div className="max-w-4xl mx-auto">
         {/* Event Info */}
-        <div className="bg-gradient-to-br from-red-950/30 to-black/50 backdrop-blur-sm border border-red-900/30 rounded-2xl p-8 mb-8 shadow-2xl">
+        <div className="bg-linear-to-br from-red-950/30 to-black/50 backdrop-blur-sm border border-red-900/30 rounded-2xl p-8 mb-8 shadow-2xl">
           <h2 className="text-3xl font-bold text-white mb-4">{eventData.title}</h2>
           <p className="text-gray-300 mb-6 text-lg">{eventData.description}</p>
 
@@ -607,7 +607,7 @@ export default function EventRegistrationPage() {
                   <button
                     type="submit"
                     disabled={submitting || !!teamNameError || !transactionId}
-                    className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? (
                       <span className="flex items-center justify-center gap-2">
@@ -624,7 +624,7 @@ export default function EventRegistrationPage() {
               <button
                 type="submit"
                 disabled={submitting || !!teamNameError}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
