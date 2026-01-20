@@ -291,7 +291,8 @@ export default function EventRegistrationPage() {
       </PageSection>
     );
   }
-
+ 
+  
   if (!eventData) {
     return null;
   }
