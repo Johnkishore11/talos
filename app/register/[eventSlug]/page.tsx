@@ -16,6 +16,7 @@ export default function EventRegistrationPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [teamNameError, setTeamNameError] = useState<string | null>(null);
+  const [transactionId, setTransactionId] = useState('');
 
   // Form state - Team Leader Info
   const [formData, setFormData] = useState({
@@ -27,6 +28,10 @@ export default function EventRegistrationPage() {
     collegeName: '',
     referralId: '',
   });
+
+  const PAYMENT_FORM_LINK = eventSlug === 'lenstolife' 
+    ? process.env.NEXT_PUBLIC_FORM_NON_TECH 
+    : process.env.NEXT_PUBLIC_FORM_IPL_AUCTION;
 
   // Team Members (1-3 members)
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -157,6 +162,10 @@ export default function EventRegistrationPage() {
     return `${safeName}-${phoneDigits || 'phone'}`.replace(/\s+/g, '-').toLowerCase();
   };
 
+  const handlePayClick = () => {
+    window.open(PAYMENT_FORM_LINK, '_blank');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -172,6 +181,12 @@ export default function EventRegistrationPage() {
     if ((!formData.teamName && !isIndividualEvent) || !formData.leaderName || !formData.leaderYear ||
       !formData.leaderEmail || !formData.leaderPhone || !formData.collegeName) {
       alert('Please fill all required fields');
+      return;
+    }
+
+    // Check if event requires payment and transaction ID
+    if (eventData?.registration_fee && eventData.registration_fee > 0 && !transactionId.trim()) {
+      alert('Please enter the Transaction ID after completing the payment');
       return;
     }
 
@@ -245,12 +260,17 @@ export default function EventRegistrationPage() {
         leader_year: formData.leaderYear,
         college_name: formData.collegeName,
         referral_id: formData.referralId || undefined,
+        transaction_id: transactionId.trim() || undefined,
         members: membersToSend,
       };
 
       await api.registerForEvent(eventSlug, registrationData);
 
-      alert('Registration successful! Your team has been registered for this event.');
+      const successMessage = eventData?.registration_fee && eventData.registration_fee > 0
+        ? 'Registration successful! Your registration is pending verification.'
+        : 'Registration successful! Your team has been registered for this event.';
+      
+      alert(successMessage);
       router.push('/profile');
     } catch (error) {
       console.error('Error submitting registration:', error);
@@ -271,7 +291,8 @@ export default function EventRegistrationPage() {
       </PageSection>
     );
   }
-
+ 
+  
   if (!eventData) {
     return null;
   }
@@ -286,14 +307,22 @@ export default function EventRegistrationPage() {
     <PageSection title={`Register - ${eventData.title}`} className="min-h-screen font-sans">
       <div className="max-w-4xl mx-auto">
         {/* Event Info */}
-        <div className="bg-gradient-to-br from-red-950/30 to-black/50 backdrop-blur-sm border border-red-900/30 rounded-2xl p-8 mb-8 shadow-2xl">
+        <div className="bg-linear-to-br from-red-950/30 to-black/50 backdrop-blur-sm border border-red-900/30 rounded-2xl p-8 mb-8 shadow-2xl">
           <h2 className="text-3xl font-bold text-white mb-4">{eventData.title}</h2>
           <p className="text-gray-300 mb-6 text-lg">{eventData.description}</p>
 
           <div className="flex flex-wrap gap-4 items-center">
-            <div className="px-4 py-2 bg-green-600/20 border border-green-600/50 rounded-lg">
-              <span className="text-green-400 font-semibold text-lg">Free Registration</span>
-            </div>
+            {eventData.registration_fee > 0 ? (
+              <div className="px-4 py-2 bg-red-600/20 border border-red-600/50 rounded-lg">
+                <span className="text-red-400 font-semibold text-lg">
+                  Registration Fee: ₹{eventData.registration_fee}
+                </span>
+              </div>
+            ) : (
+              <div className="px-4 py-2 bg-green-600/20 border border-green-600/50 rounded-lg">
+                <span className="text-green-400 font-semibold text-lg">Free Registration</span>
+              </div>
+            )}
             <div className="px-4 py-2 bg-blue-600/20 border border-blue-600/50 rounded-lg">
               <span className="text-blue-400 font-semibold">
                 {isIndividual ? (
@@ -544,20 +573,70 @@ export default function EventRegistrationPage() {
 
           {/* Submit Button */}
           <div className="mt-8 pt-6 border-t border-red-900/50">
-            <button
-              type="submit"
-              disabled={submitting || !!teamNameError}
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {submitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                  Registering...
-                </span>
-              ) : (
-                'Complete Registration'
-              )}
-            </button>
+            {eventData.registration_fee > 0 ? (
+              <div className="space-y-4">
+                <div className="bg-red-900/20 border border-red-900/30 rounded-xl p-4">
+                  <h4 className="text-white font-semibold mb-2">Step 1: Make Payment</h4>
+                  <p className="text-gray-400 text-sm mb-4">
+                    Click the button below to pay the registration fee of ₹{eventData.registration_fee}.
+                    After payment, note down the Transaction ID / UTR Number.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => window.open(PAYMENT_FORM_LINK, '_blank')}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-all"
+                  >
+                    Pay ₹{eventData.registration_fee}
+                  </button>
+                </div>
+
+                <div className="bg-red-900/20 border border-red-900/30 rounded-xl p-4">
+                  <h4 className="text-white font-semibold mb-2">Step 2: Enter Transaction Details</h4>
+                  <div className="mb-4">
+                    <label className="block text-sm font-semibold mb-2 text-red-400">
+                      Transaction ID / UTR Number <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={transactionId}
+                      onChange={(e) => setTransactionId(e.target.value)}
+                      className="w-full bg-black/50 border border-red-900/30 rounded-lg p-3 text-white placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/50 transition-all"
+                      placeholder="Enter Transaction ID"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submitting || !!teamNameError || !transactionId}
+                    className="w-full bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                        Processing...
+                      </span>
+                    ) : (
+                      'Complete Registration'
+                    )}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="submit"
+                disabled={submitting || !!teamNameError}
+                className="w-full bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-red-600/50 hover:shadow-red-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    Registering...
+                  </span>
+                ) : (
+                  'Complete Registration'
+                )}
+              </button>
+            )}
           </div>
         </form>
       </div>
