@@ -157,7 +157,11 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {eventRegistrations.map((reg) => (
+              {eventRegistrations
+                .filter((reg, index, self) => 
+                  index === self.findIndex(r => r.registration_id === reg.registration_id)
+                )
+                .map((reg) => (
                 <div
                   key={reg.registration_id}
                   className="bg-black/30 rounded-lg p-4 border border-white/5"
@@ -201,7 +205,11 @@ export default function ProfilePage() {
             <p className="text-gray-400">No workshop registrations yet.</p>
           ) : (
             <div className="space-y-4">
-              {workshopRegistrations.map((reg) => (
+              {workshopRegistrations
+                .filter((reg, index, self) => 
+                  index === self.findIndex(r => r.registration_id === reg.registration_id)
+                )
+                .map((reg) => (
                 <div
                   key={reg.registration_id}
                   className="bg-black/30 rounded-lg p-4 border border-white/5"

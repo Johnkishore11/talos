@@ -18,6 +18,7 @@ export default function WorkshopRegistrationPage() {
 
   const [emailError, setEmailError] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState('');
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
 
   const PAYMENT_FORM_LINK = process.env.NEXT_PUBLIC_FORM_IPL_AUCTION; // TODO: Replace with actual link
@@ -45,6 +46,16 @@ export default function WorkshopRegistrationPage() {
       try {
         const workshop = await api.getWorkshop(workshopSlug);
         setWorkshopData(workshop);
+        
+        // Check if user is already registered
+        if (user) {
+          try {
+            const regCheck = await api.checkWorkshopRegistration(workshopSlug);
+            setAlreadyRegistered(regCheck.registered);
+          } catch (error) {
+            console.error('Error checking registration:', error);
+          }
+        }
       } catch (error) {
         console.error('Error fetching workshop:', error);
         alert('Failed to load workshop details');
@@ -55,7 +66,7 @@ export default function WorkshopRegistrationPage() {
     };
 
     fetchWorkshop();
-  }, [workshopSlug, router]);
+  }, [workshopSlug, router, user]);
 
   // Pre-fill user data
   useEffect(() => {
@@ -172,6 +183,40 @@ export default function WorkshopRegistrationPage() {
 
   if (!workshopData) {
     return null;
+  }
+
+  if (alreadyRegistered) {
+    return (
+      <PageSection title={`Register - ${workshopData.title}`} className="min-h-screen font-sans">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-gradient-to-br from-yellow-950/30 to-black/50 backdrop-blur-sm border border-yellow-900/30 rounded-2xl p-8 shadow-2xl text-center">
+            <div className="mb-6">
+              <svg className="w-20 h-20 mx-auto text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">Already Registered</h2>
+            <p className="text-gray-300 mb-6 text-lg">
+              You are already registered for {workshopData.title}. You can only register once per workshop.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => router.push('/profile')}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-all"
+              >
+                View My Registrations
+              </button>
+              <button
+                onClick={() => router.push('/workshops')}
+                className="px-6 py-3 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-all"
+              >
+                Browse Workshops
+              </button>
+            </div>
+          </div>
+        </div>
+      </PageSection>
+    );
   }
 
   return (

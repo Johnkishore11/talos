@@ -100,6 +100,10 @@ class ApiClient {
     return this.request(`/api/events/${eventId}/check-team-name?team_name=${encodeURIComponent(teamName)}`);
   }
 
+  async checkEventRegistration(eventId: string): Promise<{ registered: boolean }> {
+    return this.request(`/api/events/${eventId}/check-registration`);
+  }
+
   // ============== Workshops ==============
 
   async getWorkshops(status?: string): Promise<Workshop[]> {
@@ -135,6 +139,10 @@ class ApiClient {
     email: string
   ): Promise<{ registered: boolean }> {
     return this.request(`/api/workshops/${workshopId}/check-email?email=${encodeURIComponent(email)}`);
+  }
+
+  async checkWorkshopRegistration(workshopId: string): Promise<{ registered: boolean }> {
+    return this.request(`/api/workshops/${workshopId}/check-registration`);
   }
 
   async registerWorkshop(

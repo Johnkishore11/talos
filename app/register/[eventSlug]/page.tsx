@@ -17,6 +17,7 @@ export default function EventRegistrationPage() {
   const [submitting, setSubmitting] = useState(false);
   const [teamNameError, setTeamNameError] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState('');
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
   // Form state - Team Leader Info
   const [formData, setFormData] = useState({
@@ -63,6 +64,16 @@ export default function EventRegistrationPage() {
         }
         setEventData(event);
 
+        // Check if user is already registered
+        if (user) {
+          try {
+            const regCheck = await api.checkEventRegistration(eventSlug);
+            setAlreadyRegistered(regCheck.registered);
+          } catch (error) {
+            console.error('Error checking registration:', error);
+          }
+        }
+
         // Initialize team members based on min_team_size
         // min_team_size includes leader, so we need min_team_size - 1 additional members
         const minAdditionalMembers = Math.max(0, (event.min_team_size || 2) - 1);
@@ -88,7 +99,7 @@ export default function EventRegistrationPage() {
     };
 
     fetchEvent();
-  }, [eventSlug, router]);
+  }, [eventSlug, router, user]);
 
   // Pre-fill user data
   useEffect(() => {
@@ -295,6 +306,40 @@ export default function EventRegistrationPage() {
   
   if (!eventData) {
     return null;
+  }
+
+  if (alreadyRegistered) {
+    return (
+      <PageSection title={`Register - ${eventData.title}`} className="min-h-screen font-sans">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-gradient-to-br from-yellow-950/30 to-black/50 backdrop-blur-sm border border-yellow-900/30 rounded-2xl p-8 shadow-2xl text-center">
+            <div className="mb-6">
+              <svg className="w-20 h-20 mx-auto text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">Already Registered</h2>
+            <p className="text-gray-300 mb-6 text-lg">
+              You are already registered for {eventData.title}. You can only register once per event.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => router.push('/profile')}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-all"
+              >
+                View My Registrations
+              </button>
+              <button
+                onClick={() => router.push('/events')}
+                className="px-6 py-3 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-all"
+              >
+                Browse Events
+              </button>
+            </div>
+          </div>
+        </div>
+      </PageSection>
+    );
   }
 
   const minMembers = eventData.min_team_size;
