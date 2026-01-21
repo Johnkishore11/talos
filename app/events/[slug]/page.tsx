@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { User as FirebaseUser } from "firebase/auth";
 import PageSection from "@/components/_core/layout/PageSection";
 import Link from "next/link";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
-import { api, type Event } from "@/lib/api";
+import type { Event } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import eventsData from "@/events.json";
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -15,29 +15,9 @@ export default function EventDetailPage() {
   const { user, loading: authLoading } = useAuth() as { user: FirebaseUser | null; loading: boolean };
   const eventId = params.slug as string;
 
-  const [event, setEvent] = useState<Event | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [registering, setRegistering] = useState(false);
-
-  useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        setLoading(true);
-        const data = await api.getEvent(eventId);
-        setEvent(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load event");
-        console.error("Error fetching event:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (eventId) {
-      fetchEvent();
-    }
-  }, [eventId]);
+  // Find event from static JSON data
+  const event: Event | null = (eventsData as Event[]).find(e => e.event_id === eventId) || null;
+  const registering = false;
 
   const handleRegister = async () => {
     if (!user) {
@@ -51,21 +31,11 @@ export default function EventDetailPage() {
     router.push(`/register/${eventId}`);
   };
 
-  if (loading) {
-    return (
-      <PageSection title="Event Details" className="min-h-screen">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
-        </div>
-      </PageSection>
-    );
-  }
-
-  if (error || !event) {
+  if (!event) {
     return (
       <PageSection title="Event Details" className="min-h-screen">
         <div className="flex flex-col items-center justify-center h-64 text-center">
-          <p className="text-red-500 mb-4">{error || "Event not found"}</p>
+          <p className="text-red-500 mb-4">Event not found</p>
           <Link
             href="/events"
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -149,7 +119,7 @@ export default function EventDetailPage() {
                 )}
                 <div className="flex justify-between">
                   <span className="text-gray-500">Fee</span>
-                  {event.registration_fee > 0 ? (
+                  {(event.registration_fee ?? 0) > 0 ? (
                     <span className="text-red-400">₹{event.registration_fee}</span>
                   ) : (
                     <span className="text-green-400">Free</span>

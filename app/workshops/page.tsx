@@ -1,10 +1,8 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import PageSection from "@/components/_core/layout/PageSection";
 import Link from "next/link";
 import { FlipCard } from "@/components/ui/FlipCard";
-import { api, type Workshop } from "@/lib/api";
+import type { Workshop } from "@/lib/api";
+import workshopsData from "@/workshops.json";
 
 const WORKSHOP_IMAGES: Record<string, string> = {
   "byog-workshop": "/images/workshop-images/Build Your own Game.jpg",
@@ -15,52 +13,7 @@ const WORKSHOP_IMAGES: Record<string, string> = {
 };
 
 export default function WorkshopsPage() {
-  const [workshops, setWorkshops] = useState<Workshop[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchWorkshops = async () => {
-      try {
-        setLoading(true);
-        const data = await api.getWorkshops();
-        setWorkshops(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load workshops");
-        console.error("Error fetching workshops:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWorkshops();
-  }, []);
-
-  if (loading) {
-    return (
-      <PageSection title="Workshops" className="min-h-screen">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
-        </div>
-      </PageSection>
-    );
-  }
-
-  if (error) {
-    return (
-      <PageSection title="Workshops" className="min-h-screen">
-        <div className="flex flex-col items-center justify-center h-64 text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </PageSection>
-    );
-  }
+  const workshops: Workshop[] = workshopsData as Workshop[];
 
   return (
     <PageSection title="Workshops" className="min-h-screen">

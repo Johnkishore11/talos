@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { User as FirebaseUser } from "firebase/auth";
 import PageSection from "@/components/_core/layout/PageSection";
 import Link from "next/link";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
-import { api, type Workshop } from "@/lib/api";
+import type { Workshop } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import workshopsData from "@/workshops.json";
 
 declare global {
   interface Window {
@@ -23,29 +24,9 @@ export default function WorkshopDetailPage() {
   const { user, loading: authLoading } = useAuth() as { user: FirebaseUser | null; loading: boolean };
   const workshopId = params.slug as string;
 
-  const [workshop, setWorkshop] = useState<Workshop | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [processing, setProcessing] = useState(false);
-
-  useEffect(() => {
-    const fetchWorkshop = async () => {
-      try {
-        setLoading(true);
-        const data = await api.getWorkshop(workshopId);
-        setWorkshop(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load workshop");
-        console.error("Error fetching workshop:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (workshopId) {
-      fetchWorkshop();
-    }
-  }, [workshopId]);
+  // Find workshop from static JSON data
+  const workshop: Workshop | null = (workshopsData as Workshop[]).find(w => w.workshop_id === workshopId) || null;
+  const processing = false;
 
   // Load Razorpay script
   useEffect(() => {
@@ -70,21 +51,11 @@ export default function WorkshopDetailPage() {
     router.push(`/workshops/${workshopId}/register`);
   };
 
-  if (loading) {
-    return (
-      <PageSection title="Workshop Details" className="min-h-screen">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
-        </div>
-      </PageSection>
-    );
-  }
-
-  if (error || !workshop) {
+  if (!workshop) {
     return (
       <PageSection title="Workshop Details" className="min-h-screen">
         <div className="flex flex-col items-center justify-center h-64 text-center">
-          <p className="text-red-500 mb-4">{error || "Workshop not found"}</p>
+          <p className="text-red-500 mb-4">Workshop not found</p>
           <Link
             href="/workshops"
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"

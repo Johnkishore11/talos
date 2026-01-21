@@ -357,7 +357,7 @@ export default function EventRegistrationPage() {
           <p className="text-gray-300 mb-6 text-lg">{eventData.description}</p>
 
           <div className="flex flex-wrap gap-4 items-center">
-            {eventData.registration_fee > 0 ? (
+            {(eventData.registration_fee ?? 0) > 0 ? (
               <div className="px-4 py-2 bg-red-600/20 border border-red-600/50 rounded-lg">
                 <span className="text-red-400 font-semibold text-lg">
                   Registration Fee: ₹{eventData.registration_fee}
@@ -618,7 +618,7 @@ export default function EventRegistrationPage() {
 
           {/* Submit Button */}
           <div className="mt-8 pt-6 border-t border-red-900/50">
-            {eventData.registration_fee > 0 ? (
+            {(eventData.registration_fee ?? 0) > 0 ? (
               <div className="space-y-4">
                 <div className="bg-red-900/20 border border-red-900/30 rounded-xl p-4">
                   <h4 className="text-white font-semibold mb-2">Step 1: Make Payment</h4>

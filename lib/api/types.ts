@@ -11,13 +11,16 @@ export interface Event {
   time: string;
   venue?: string;
   image_url: string;
-  max_participants: number;
+  max_participants: number | null;
   min_team_size: number;
   max_team_size: number;
   is_team_event?: boolean;
-  registration_fee: number;
+  registration_fee?: number;
   status: "open" | "closed" | "cancelled";
   created_at: string;
+  caption?: string;
+  oneLiner?: string | null;
+  hashtags?: string[];
   organiser?: {
     name: string;
     contact: string[];
@@ -69,14 +72,14 @@ export interface Workshop {
   title: string;
   description: string;
   main_description?: string;
-  rules?: string;
+  rules?: string | null;
   instructor: string;
   date: string;
   time: string;
   duration: string;
   venue?: string;
   image_url: string;
-  max_participants: number;
+  max_participants: number | null;
   registration_fee: number;
   status: "open" | "closed" | "cancelled";
   created_at: string;

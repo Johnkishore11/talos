@@ -1,58 +1,11 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import PageSection from "@/components/_core/layout/PageSection";
 import Link from "next/link";
 import { FlipCard } from "@/components/ui/FlipCard";
-import { api, type Event } from "@/lib/api";
+import type { Event } from "@/lib/api";
+import eventsData from "@/events.json";
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const data = await api.getEvents();
-        setEvents(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load events");
-        console.error("Error fetching events:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
-  if (loading) {
-    return (
-      <PageSection title="Events" className="min-h-screen">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
-        </div>
-      </PageSection>
-    );
-  }
-
-  if (error) {
-    return (
-      <PageSection title="Events" className="min-h-screen">
-        <div className="flex flex-col items-center justify-center h-64 text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </PageSection>
-    );
-  }
+  const events: Event[] = eventsData as Event[];
 
   const techEvents = events.filter(event => event.category === "Technical");
   const nonTechEvents = events.filter(event => event.category === "Non-Technical");
