@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageSection from '@/components/_core/layout/PageSection';
 import { api, type Event, type EventRegistrationRequest, type TeamMember } from '@/lib/api';
+import eventsData from '@/events.json';
 
 export default function EventRegistrationPage() {
   const { user, loading: authLoading } = useAuth();
@@ -12,8 +13,32 @@ export default function EventRegistrationPage() {
   const params = useParams();
   const eventSlug = params?.eventSlug as string;
 
-  const [eventData, setEventData] = useState<Event | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Get event data from static JSON instead of API
+  const getEventFromJson = (): Event | null => {
+    const event = (eventsData as Event[]).find(e => e.event_id === eventSlug);
+    if (!event) return null;
+    
+    // Create a copy to avoid mutating the original
+    const eventCopy = { ...event };
+    
+    // Override for Plot Verse and Pixora to ensure they allow 1-2 participants
+    const lowerTitle = eventCopy.title.toLowerCase();
+    const lowerSlug = eventSlug.toLowerCase();
+
+    const isFlexibleEvent = lowerTitle.includes('pixora') ||
+      lowerTitle.includes('plot') ||
+      lowerSlug.includes('pixora') ||
+      lowerSlug.includes('plot');
+
+    if (isFlexibleEvent) {
+      eventCopy.min_team_size = 1;
+      if (eventCopy.max_team_size < 2) eventCopy.max_team_size = 2;
+    }
+    
+    return eventCopy;
+  };
+
+  const [eventData] = useState<Event | null>(getEventFromJson);
   const [submitting, setSubmitting] = useState(false);
   const [teamNameError, setTeamNameError] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState('');
@@ -34,8 +59,16 @@ export default function EventRegistrationPage() {
     ? process.env.NEXT_PUBLIC_FORM_NON_TECH 
     : process.env.NEXT_PUBLIC_FORM_IPL_AUCTION;
 
-  // Team Members (1-3 members)
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  // Team Members - initialize based on event's min_team_size
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => {
+    if (!eventData) return [];
+    const minAdditionalMembers = Math.max(0, (eventData.min_team_size || 2) - 1);
+    return Array(minAdditionalMembers).fill(null).map(() => ({
+      name: '',
+      email: '',
+      phone: ''
+    }));
+  });
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -43,63 +76,29 @@ export default function EventRegistrationPage() {
     }
   }, [user, authLoading, router]);
 
+  // Redirect if event not found
   useEffect(() => {
-    const fetchEvent = async () => {
-      if (!eventSlug) return;
+    if (!eventData && !authLoading) {
+      alert('Event not found');
+      router.push('/events');
+    }
+  }, [eventData, authLoading, router]);
 
+  // Check if user is already registered (still needs API call)
+  useEffect(() => {
+    const checkRegistration = async () => {
+      if (!user || !eventSlug) return;
+      
       try {
-        const event = await api.getEvent(eventSlug);
-        // Override for Plot Verse and Pixora to ensure they allow 1-2 participants
-        const lowerTitle = event.title.toLowerCase();
-        const lowerSlug = eventSlug.toLowerCase();
-
-        const isFlexibleEvent = lowerTitle.includes('pixora') ||
-          lowerTitle.includes('plot') ||
-          lowerSlug.includes('pixora') ||
-          lowerSlug.includes('plot');
-
-        if (isFlexibleEvent) {
-          event.min_team_size = 1;
-          if (event.max_team_size < 2) event.max_team_size = 2;
-        }
-        setEventData(event);
-
-        // Check if user is already registered
-        if (user) {
-          try {
-            const regCheck = await api.checkEventRegistration(eventSlug);
-            setAlreadyRegistered(regCheck.registered);
-          } catch (error) {
-            console.error('Error checking registration:', error);
-          }
-        }
-
-        // Initialize team members based on min_team_size
-        // min_team_size includes leader, so we need min_team_size - 1 additional members
-        const minAdditionalMembers = Math.max(0, (event.min_team_size || 2) - 1);
-        const initialMembers = Array(minAdditionalMembers).fill(null).map(() => ({
-          name: '',
-          email: '',
-          phone: ''
-        }));
-
-        // If initialMembers is empty (e.g. min_team_size is 1), we might still want to show at least one if max > 1?
-        // But the requirement says "match min_team_size". 
-        // If min_team_size is 1 (solo), then 0 additional members.
-        // If min_team_size is 2, then 1 additional member.
-        setTeamMembers(initialMembers);
-
+        const regCheck = await api.checkEventRegistration(eventSlug);
+        setAlreadyRegistered(regCheck.registered);
       } catch (error) {
-        console.error('Error fetching event:', error);
-        alert('Failed to load event details');
-        router.push('/events');
-      } finally {
-        setLoading(false);
+        console.error('Error checking registration:', error);
       }
     };
 
-    fetchEvent();
-  }, [eventSlug, router, user]);
+    checkRegistration();
+  }, [user, eventSlug]);
 
   // Pre-fill user data
   useEffect(() => {
@@ -292,12 +291,12 @@ export default function EventRegistrationPage() {
     }
   };
 
-  if (loading || authLoading) {
+  if (authLoading) {
     return (
       <PageSection title="Register" className="min-h-screen flex items-center justify-center font-sans">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600 mx-auto"></div>
-          <p className="mt-4 text-gray-400">Loading event details...</p>
+          <p className="mt-4 text-gray-400">Loading...</p>
         </div>
       </PageSection>
     );
