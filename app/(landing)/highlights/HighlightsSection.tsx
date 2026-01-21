@@ -4,7 +4,7 @@ import CountUp from '@/components/ui/CountUp';
 export default function HighlightsSection() {
   const stats = [
     { label: 'Participants', value: 5000, suffix: '+' },
-    { label: 'Events', value: 25, suffix: '+' },
+    { label: 'Events', value: 16, suffix: '' },
     { label: 'Prize Pool', value: 100, prefix: '₹', suffix: 'K' },
     { label: 'Colleges', value: 50, suffix: '+' },
   ];

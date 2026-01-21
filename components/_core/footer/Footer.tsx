@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="w-full px-4 md:px-8">
         {/* Terminal Window */}
         <div className="w-full overflow-hidden rounded-lg border border-red-900/30 bg-black shadow-xl ring-1 ring-red-500/20">
-          
+
           {/* Terminal Header */}
           <div className="flex items-center justify-between bg-[#0a0a0a] px-4 py-2 border-b border-red-900/30">
             <div className="flex gap-2">
@@ -26,9 +26,9 @@ export default function Footer() {
           <div className="p-6 md:p-8 bg-black/95 relative">
             {/* Subtle red grid background */}
             <div className="absolute inset-0 pointer-events-none opacity-5" style={{ backgroundImage: 'linear-gradient(#330000 1px, transparent 1px), linear-gradient(90deg, #330000 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-            
+
             <div className="relative grid grid-cols-1 gap-12 lg:grid-cols-2">
-              
+
               {/* Left Column: Identity & Location */}
               <div className="space-y-6">
                 <div>
@@ -38,9 +38,9 @@ export default function Footer() {
                     <span className="text-red-500">~$</span> TALOS-5.0
                   </h2>
                   <p className="text-[#FFFFFF] max-w-md mt-4 leading-relaxed">
-                    Initializing <span className="text-red-600">red chip...</span><br/>
+                    Initializing <span className="text-red-600">red chip...</span><br />
                     <span className="text-[#FFFFFF]">
-                      &gt; Loading crimson modules...<span className="text-green-500"> Done.</span><br/>
+                      &gt; Loading crimson modules...<span className="text-green-500"> Done.</span><br />
                       &gt; Establishing connection to database... <span className="text-green-500">Success</span>
                     </span>
                   </p>
@@ -50,13 +50,13 @@ export default function Footer() {
                   {/* Map with filters */}
                   <div className="relative h-48 w-full overflow-hidden rounded border border-red-900/40 group">
                     <div className="absolute inset-0 z-10 pointer-events-none border border-red-500/10 mix-blend-overlay"></div>
-                    <iframe 
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.0045129864275!2d80.04307899999999!3d12.971562799999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52f4d07355bab5%3A0xbb6063169c4ed4d9!2sChennai%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1767802258558!5m2!1sen!2sin" 
-                      width="100%" 
-                      height="100%" 
-                      style={{ border: 0 }} 
-                      allowFullScreen 
-                      loading="lazy" 
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.0045129864275!2d80.04307899999999!3d12.971562799999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52f4d07355bab5%3A0xbb6063169c4ed4d9!2sChennai%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1767802258558!5m2!1sen!2sin"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                       className="h-full w-full grayscale invert hover:invert-0 transition-all duration-500 ease-in-out"
                     ></iframe>
@@ -70,7 +70,7 @@ export default function Footer() {
 
               {/* Right Column: Links Grid */}
               <div className="grid grid-cols-2 gap-8 gap-y-12 content-start">
-                
+
                 {/* Navigation */}
                 <div className="space-y-4">
                   <h3 className="text-red-500 font-bold border-b border-red-900/30 pb-2 inline-block">
@@ -123,8 +123,14 @@ export default function Footer() {
                     ./Event_Coordinators
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF] text-sm">
-                    <li><span className="text-red-600">Muzammil</span> <a href="tel:73054 01558" className="hover:text-red-600 transition-colors">73054 01558</a></li>
-                    <li><span className="text-red-600">Madhan</span> <a href="tel:63820 29023" className="hover:text-red-600 transition-colors">63820 29023</a></li>
+                    <li className="flex flex-col">
+                      <span className="text-red-600">Muzammil</span>
+                      <a href="tel:73054 01558" className="hover:text-red-600 transition-colors">73054 01558</a>
+                    </li>
+                    <li className="flex flex-col">
+                      <span className="text-red-600">Madhan</span>
+                      <a href="tel:63820 29023" className="hover:text-red-600 transition-colors">63820 29023</a>
+                    </li>
                   </ul>
                   <h4 className="text-red-400 font-semibold text-xs mt-4">Staff Coordinator</h4>
                   <div className="text-[#FFFFFF] text-xs space-y-1">
@@ -149,7 +155,7 @@ export default function Footer() {
 
                 {/* Contact Us */}
                 <div className="space-y-4">
-                   <h3 className="text-red-500 font-bold border-b border-red-900/30 pb-2 inline-block">
+                  <h3 className="text-red-500 font-bold border-b border-red-900/30 pb-2 inline-block">
                     ./Contact_Us
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF] text-sm">
@@ -175,9 +181,9 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        
+
         <div className="text-center mt-8 text-[#b6b6b6] text-xs">
-           /* DESIGNED & DEVELOPED BY DEVELOPER KULU */
+           /* DESIGNED & DEVELOPED BY DEVELOPER TEAM */
         </div>
       </div>
     </footer>
