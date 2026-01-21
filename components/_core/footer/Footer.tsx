@@ -123,8 +123,14 @@ export default function Footer() {
                     ./Event_Coordinators
                   </h3>
                   <ul className="space-y-2 text-[#FFFFFF] text-sm">
-                    <li><span className="text-red-600">Muzammil</span> <a href="tel:73054 01558" className="hover:text-red-600 transition-colors">73054 01558</a></li>
-                    <li><span className="text-red-600">Madhan</span> <a href="tel:63820 29023" className="hover:text-red-600 transition-colors">63820 29023</a></li>
+                    <li className="flex flex-col">
+                      <span className="text-red-600">Muzammil</span>
+                      <a href="tel:73054 01558" className="hover:text-red-600 transition-colors">73054 01558</a>
+                    </li>
+                    <li className="flex flex-col">
+                      <span className="text-red-600">Madhan</span>
+                      <a href="tel:63820 29023" className="hover:text-red-600 transition-colors">63820 29023</a>
+                    </li>
                   </ul>
                   <h4 className="text-red-400 font-semibold text-xs mt-4">Staff Coordinator</h4>
                   <div className="text-[#FFFFFF] text-xs space-y-1">
