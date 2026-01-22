@@ -5,14 +5,15 @@ import type { Event } from "@/lib/api";
 import eventsData from "@/events.json";
 
 export default function PreviewSection() {
-  type PreviewItem = { title: string; desc: string; tag: string; image: string };
-  
+  type PreviewItem = { title: string; desc: string; tag: string; image: string; slug: string };
+
   // Map events from static JSON data
   const items: PreviewItem[] = (eventsData as Event[]).map((e: Event) => ({
     title: e.title,
     desc: e.description,
     tag: e.category,
     image: e.image_url,
+    slug: e.event_id,
   }));
 
   const hasItems = items.length > 0;
@@ -42,9 +43,9 @@ export default function PreviewSection() {
       {hasItems ? (
         <DraggableEventsCarousel items={items} />
       ) : (
-         <div className="flex h-64 items-center justify-center text-gray-500">
-            <p>No events available at the moment.</p>
-         </div>
+        <div className="flex h-64 items-center justify-center text-gray-500">
+          <p>No events available at the moment.</p>
+        </div>
       )}
     </section>
   );
