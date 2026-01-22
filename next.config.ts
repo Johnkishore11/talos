@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
+  // React Compiler disabled - causes Turbopack issues
+  // reactCompiler: true,
   
   // Optimize images
   images: {
