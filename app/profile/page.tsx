@@ -19,7 +19,10 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !firebaseUser) {
+    // Wait for auth to fully complete before doing anything
+    if (authLoading) return;
+    
+    if (!firebaseUser) {
       router.push("/login");
       return;
     }
@@ -28,6 +31,9 @@ export default function ProfilePage() {
       try {
         setLoading(true);
         console.log('Fetching user data for:', firebaseUser?.email);
+
+        // Ensure token is ready before making API calls
+        await firebaseUser.getIdToken(true);
 
         // Try API first
         try {
@@ -65,9 +71,7 @@ export default function ProfilePage() {
       }
     };
 
-    if (!authLoading && firebaseUser) {
-      fetchUserData();
-    }
+    fetchUserData();
   }, [firebaseUser, authLoading, router]);
 
   const handleLogout = async () => {

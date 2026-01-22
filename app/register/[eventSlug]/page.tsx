@@ -87,7 +87,8 @@ export default function EventRegistrationPage() {
   // Check if user is already registered (still needs API call)
   useEffect(() => {
     const checkRegistration = async () => {
-      if (!user || !eventSlug) return;
+      // Wait for auth to fully complete before making API calls
+      if (authLoading || !user || !eventSlug) return;
       
       try {
         const regCheck = await api.checkEventRegistration(eventSlug);
@@ -98,7 +99,7 @@ export default function EventRegistrationPage() {
     };
 
     checkRegistration();
-  }, [user, eventSlug]);
+  }, [user, eventSlug, authLoading]);
 
   // Pre-fill user data
   useEffect(() => {

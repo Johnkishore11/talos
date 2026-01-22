@@ -1,5 +1,6 @@
 
 import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import type {
   Event,
   EventRegistration,
@@ -17,10 +18,52 @@ const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
 
 class ApiClient {
   private async getAuthToken(): Promise<string | null> {
-    if (!auth?.currentUser) {
+    if (!auth) {
+      console.warn('[API] Auth not initialized');
       return null;
     }
-    return auth.currentUser.getIdToken();
+    
+    // If currentUser is available, get the token
+    if (auth.currentUser) {
+      console.log('[API] Getting token from currentUser:', auth.currentUser.email);
+      try {
+        const token = await auth.currentUser.getIdToken(true);
+        console.log('[API] Token retrieved successfully, length:', token.length);
+        return token;
+      } catch (e) {
+        console.error('[API] Failed to get token from currentUser:', e);
+        return null;
+      }
+    }
+    
+    console.log('[API] No currentUser, waiting for auth state...');
+    
+    // Wait for auth state to be ready (max 5 seconds)
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        console.warn('[API] Auth state timeout - no user found after 5s');
+        resolve(null);
+      }, 5000);
+      
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        clearTimeout(timeout);
+        unsubscribe();
+        if (user) {
+          console.log('[API] Auth state resolved, user:', user.email);
+          try {
+            const token = await user.getIdToken(true);
+            console.log('[API] Token retrieved from auth state, length:', token.length);
+            resolve(token);
+          } catch (e) {
+            console.error('[API] Failed to get token from auth state:', e);
+            resolve(null);
+          }
+        } else {
+          console.warn('[API] Auth state resolved but no user');
+          resolve(null);
+        }
+      });
+    });
   }
 
   private async request<T>(
@@ -28,6 +71,8 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const token = await this.getAuthToken();
+    
+    console.log(`[API] Request to ${endpoint}, token present: ${!!token}, token length: ${token?.length || 0}`);
 
     const headers: HeadersInit = {
       "Content-Type": "application/json",
@@ -36,6 +81,8 @@ class ApiClient {
 
     if (token) {
       (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+    } else {
+      console.warn(`[API] No token available for protected endpoint: ${endpoint}`);
     }
 
     const url = `${API_BASE_URL}${endpoint}`;

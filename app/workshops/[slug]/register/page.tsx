@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageSection from '@/components/_core/layout/PageSection';
 import { api, type Workshop, type WorkshopRegistrationRequest } from '@/lib/api';
+import workshopsData from '@/workshops.json';
 
 export default function WorkshopRegistrationPage() {
   const { user, loading: authLoading } = useAuth();
@@ -12,8 +13,14 @@ export default function WorkshopRegistrationPage() {
   const params = useParams();
   const workshopSlug = params?.slug as string;
 
-  const [workshopData, setWorkshopData] = useState<Workshop | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Get workshop data from static JSON instead of API
+  const getWorkshopFromJson = (): Workshop | null => {
+    const workshop = (workshopsData as Workshop[]).find(w => w.workshop_id === workshopSlug);
+    return workshop || null;
+  };
+
+  const [workshopData] = useState<Workshop | null>(getWorkshopFromJson);
+  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -39,34 +46,30 @@ export default function WorkshopRegistrationPage() {
     }
   }, [user, authLoading, router]);
 
+  // Redirect if workshop not found
   useEffect(() => {
-    const fetchWorkshop = async () => {
-      if (!workshopSlug) return;
+    if (!workshopData && !authLoading) {
+      alert('Workshop not found');
+      router.push('/workshops');
+    }
+  }, [workshopData, authLoading, router]);
+
+  // Check if user is already registered (needs API call)
+  useEffect(() => {
+    const checkRegistration = async () => {
+      // Wait for auth to fully complete before making API calls
+      if (authLoading || !user || !workshopSlug) return;
 
       try {
-        const workshop = await api.getWorkshop(workshopSlug);
-        setWorkshopData(workshop);
-        
-        // Check if user is already registered
-        if (user) {
-          try {
-            const regCheck = await api.checkWorkshopRegistration(workshopSlug);
-            setAlreadyRegistered(regCheck.registered);
-          } catch (error) {
-            console.error('Error checking registration:', error);
-          }
-        }
+        const regCheck = await api.checkWorkshopRegistration(workshopSlug);
+        setAlreadyRegistered(regCheck.registered);
       } catch (error) {
-        console.error('Error fetching workshop:', error);
-        alert('Failed to load workshop details');
-        router.push('/workshops');
-      } finally {
-        setLoading(false);
+        console.error('Error checking registration:', error);
       }
     };
 
-    fetchWorkshop();
-  }, [workshopSlug, router, user]);
+    checkRegistration();
+  }, [workshopSlug, user, authLoading]);
 
   // Pre-fill user data
   useEffect(() => {
