@@ -29,8 +29,39 @@ export default function LoginPage() {
     try {
       await signInWithPopup(auth, googleProvider);
       router.push(redirectTo);
-    } catch (error) {
-      console.error(error);
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      
+      // Handle specific Firebase auth errors
+      const firebaseError = error as { code?: string; message?: string };
+      
+      if (firebaseError.code === 'auth/popup-closed-by-user') {
+        // User closed the popup - no need to show error
+        return;
+      }
+      
+      if (firebaseError.code === 'auth/popup-blocked') {
+        alert('Popup was blocked by your browser. Please allow popups for this site and try again.');
+        return;
+      }
+      
+      if (firebaseError.code === 'auth/cancelled-popup-request') {
+        // Another popup was opened - ignore
+        return;
+      }
+      
+      if (firebaseError.message?.includes('initial state') || 
+          firebaseError.code === 'auth/missing-initial-state') {
+        alert('Login failed due to browser privacy settings. Please try:\n\n1. Exit private/incognito mode\n2. Allow third-party cookies for this site\n3. Try a different browser');
+        return;
+      }
+      
+      if (firebaseError.code === 'auth/network-request-failed') {
+        alert('Network error. Please check your internet connection and try again.');
+        return;
+      }
+      
+      alert('Login failed. Please try again.');
     }
   };
 

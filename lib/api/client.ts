@@ -16,6 +16,11 @@ import type {
 
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
 
+// Validate API URL at module load
+if (!API_BASE_URL && typeof window !== 'undefined') {
+  console.error('[API] CRITICAL: NEXT_PUBLIC_API_URL is not configured! API requests will fail.');
+}
+
 class ApiClient {
   private async getAuthToken(): Promise<string | null> {
     if (!auth) {
@@ -83,6 +88,12 @@ class ApiClient {
       (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
     } else {
       console.warn(`[API] No token available for protected endpoint: ${endpoint}`);
+    }
+
+    // Validate API URL before making request
+    if (!API_BASE_URL) {
+      console.error('[API] NEXT_PUBLIC_API_URL is not configured');
+      throw new Error("Server configuration error. Please contact support.");
     }
 
     const url = `${API_BASE_URL}${endpoint}`;
