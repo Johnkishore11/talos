@@ -56,6 +56,7 @@ export default function DecryptedText({
   const [revealedIndices, setRevealedIndices] = useState<Set<number>>(new Set());
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const containerRef = useRef<HTMLSpanElement>(null);
+  const animationCompleteCalledRef = useRef<boolean>(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -141,7 +142,10 @@ export default function DecryptedText({
             } else {
               clearInterval(interval);
               setIsScrambling(false);
-              if (onAnimationComplete) onAnimationComplete();
+              if (onAnimationComplete && !animationCompleteCalledRef.current) {
+                animationCompleteCalledRef.current = true;
+                setTimeout(() => onAnimationComplete(), 0);
+              }
               return prevRevealed;
             }
           } else {
@@ -151,7 +155,10 @@ export default function DecryptedText({
               clearInterval(interval);
               setIsScrambling(false);
               setDisplayText(text);
-              if (onAnimationComplete) onAnimationComplete();
+              if (onAnimationComplete && !animationCompleteCalledRef.current) {
+                animationCompleteCalledRef.current = true;
+                setTimeout(() => onAnimationComplete(), 0);
+              }
             }
             return prevRevealed;
           }

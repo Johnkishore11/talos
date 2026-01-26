@@ -52,7 +52,8 @@ export default function RootLayout({
       </head>
       <body className={`min-h-screen flex flex-col ${zenDots.variable} ${ibmPlexMono.variable}`}>
         <CustomCursor />
-        <Ribbons
+        {/* Ribbons temporarily disabled due to Turbopack compatibility issues */}
+        {/* <Ribbons
           baseThickness={10}
           colors={['#ff0000']}
           speedMultiplier={1.0}
@@ -60,7 +61,7 @@ export default function RootLayout({
           pointCount={25}
           enableFade={false}
           enableShaderEffect={false}
-        />
+        /> */}
         <SmoothScroll>
           <Navbar />
           <main className="flex-grow">
